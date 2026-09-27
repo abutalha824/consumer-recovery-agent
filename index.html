@@ -172,7 +172,23 @@
           "<br><br>Problem: " + problem +
           "<br><br>Recovery Goal: " + goal;
       });
-  </script>
+  // Recovery analysis
+        const analysisBox = document.createElement("div");
+
+        analysisBox.style.marginTop = "20px";
+        analysisBox.style.padding = "20px";
+        analysisBox.style.background = "#eef4ff";
+        analysisBox.style.borderRadius = "10px";
+        analysisBox.style.border = "1px solid #c7d7fe";
+
+        analysisBox.innerHTML =
+          "<h2>Recovery Analysis</h2>" +
+          "<p><strong>Case Type:</strong> Refund / Payment Recovery</p>" +
+          "<p><strong>Priority:</strong> Standard</p>" +
+          "<p><strong>Next Action:</strong> Review the evidence and contact the merchant with the refund request.</p>" +
+          "<p><strong>Evidence Needed:</strong> Order proof, payment proof, return/cancellation proof, and previous communication with the merchant.</p>";
+
+        document.getElementById("result").appendChild(analysisBox);</script>
 
 </body>
 </html>
