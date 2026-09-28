@@ -3,36 +3,64 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Consumer Recovery</title>
+
+  <title>Consumer Recovery Agent</title>
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
       background: #f5f7fb;
-      margin: 0;
-      padding: 0;
       color: #172033;
     }
 
     .container {
-      max-width: 700px;
-      margin: 60px auto;
-      background: white;
-      padding: 40px;
-      border-radius: 16px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+      max-width: 850px;
+      margin: 50px auto;
+      padding: 20px;
     }
 
-    h1 {
-      margin-top: 0;
-      font-size: 36px;
+    .header {
+      background: #111827;
+      color: white;
+      padding: 35px;
+      border-radius: 18px;
+      margin-bottom: 25px;
     }
 
-    .subtitle {
-      color: #667085;
-      font-size: 17px;
+    .header h1 {
+      margin: 0 0 12px;
+      font-size: 34px;
+    }
+
+    .header p {
+      margin: 0;
+      color: #d1d5db;
       line-height: 1.6;
-      margin-bottom: 30px;
+      font-size: 16px;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 18px;
+      margin-bottom: 25px;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.06);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+
+    .card-description {
+      color: #667085;
+      line-height: 1.5;
+      margin-bottom: 25px;
     }
 
     label {
@@ -43,13 +71,14 @@
     }
 
     input,
-    textarea {
+    textarea,
+    select {
       width: 100%;
-      box-sizing: border-box;
       padding: 13px;
       border: 1px solid #d0d5dd;
-      border-radius: 8px;
+      border-radius: 9px;
       font-size: 15px;
+      font-family: Arial, sans-serif;
     }
 
     textarea {
@@ -57,12 +86,19 @@
       resize: vertical;
     }
 
-    button {
-      margin-top: 25px;
+    input:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: #111827;
+    }
+
+    .button {
       width: 100%;
-      padding: 15px;
+      margin-top: 28px;
+      padding: 16px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       background: #111827;
       color: white;
       font-size: 16px;
@@ -70,17 +106,60 @@
       cursor: pointer;
     }
 
-    button:hover {
+    .button:hover {
       opacity: 0.9;
     }
 
-    #result {
+    #results {
       display: none;
-      margin-top: 30px;
-      padding: 20px;
-      background: #f0fdf4;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 7px 12px;
+      border-radius: 20px;
+      background: #fff7ed;
+      color: #9a3412;
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .result-section {
+      border-top: 1px solid #eaecf0;
+      padding-top: 20px;
+      margin-top: 20px;
+    }
+
+    .result-section h3 {
+      margin-bottom: 8px;
+    }
+
+    .result-section p {
+      color: #475467;
+      line-height: 1.6;
+    }
+
+    .message-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 18px;
       border-radius: 10px;
-      border: 1px solid #bbf7d0;
+      line-height: 1.6;
+      white-space: pre-line;
+    }
+
+    .evidence-list {
+      padding-left: 20px;
+      line-height: 1.9;
+      color: #475467;
+    }
+
+    .footer {
+      text-align: center;
+      color: #98a2b3;
+      font-size: 13px;
+      padding: 10px;
     }
   </style>
 </head>
@@ -89,106 +168,238 @@
 
   <div class="container">
 
-    <h1>Consumer Recovery</h1>
+    <div class="header">
+      <h1>Consumer Recovery Agent</h1>
+      <p>
+        Tell us what went wrong. The agent will structure your case,
+        identify what evidence is needed, and prepare the next recovery action.
+      </p>
+    </div>
 
-    <p class="subtitle">
-      Got a refund, cancellation, payment, or service problem?
-      Tell us what happened and we'll help you create a recovery case.
-    </p>
 
-    <form id="recoveryForm">
+    <div class="card">
 
-      <label>Merchant / Company</label>
-      <input
-        type="text"
-        id="merchant"
-        placeholder="Example: Amazon"
-        required
-      >
+      <h2>Start a Recovery Case</h2>
 
-      <label>Amount</label>
-      <input
-        type="number"
-        id="amount"
-        placeholder="Example: 4999"
-        required
-      >
+      <p class="card-description">
+        Give us the basic details of your problem so we can analyze the case.
+      </p>
 
-      <label>What happened?</label>
-      <textarea
-        id="problem"
-        placeholder="Example: I returned my product 10 days ago but haven't received my refund."
-        required
-      ></textarea>
 
-      <label>What do you want recovered?</label>
-      <textarea
-        id="goal"
-        placeholder="Example: I want my ₹4,999 refund."
-        required
-      ></textarea>
+      <form id="recoveryForm">
 
-      <label>Upload evidence</label>
-      <input type="file" id="evidence">
+        <label for="merchant">
+          Merchant / Company
+        </label>
 
-      <button type="submit">
-        Start Recovery Case
-      </button>
+        <input
+          type="text"
+          id="merchant"
+          placeholder="Example: Amazon"
+          required
+        >
 
-    </form>
 
-    <div id="result">
-      <h2>Recovery Case Created ✅</h2>
-      <p><strong>Status:</strong> NEW</p>
-      <p id="caseDetails"></p>
+        <label for="amount">
+          Amount involved
+        </label>
+
+        <input
+          type="number"
+          id="amount"
+          placeholder="Example: 4999"
+          required
+        >
+
+
+        <label for="problem">
+          What happened?
+        </label>
+
+        <textarea
+          id="problem"
+          placeholder="Explain what happened in your own words..."
+          required
+        ></textarea>
+
+
+        <label for="goal">
+          What do you want recovered?
+        </label>
+
+        <textarea
+          id="goal"
+          placeholder="Example: I want my full refund of ₹4,999."
+          required
+        ></textarea>
+
+
+        <label for="evidence">
+          Upload evidence
+        </label>
+
+        <input
+          type="file"
+          id="evidence"
+          multiple
+        >
+
+
+        <button class="button" type="submit">
+          Analyze My Case →
+        </button>
+
+      </form>
+
+    </div>
+
+
+    <div class="card" id="results">
+
+      <span class="status">
+        CASE STATUS: ANALYZED
+      </span>
+
+      <h2>Recovery Case Analysis</h2>
+
+      <div class="result-section">
+
+        <h3>Case Summary</h3>
+
+        <p id="caseSummary"></p>
+
+      </div>
+
+
+      <div class="result-section">
+
+        <h3>Case Type</h3>
+
+        <p id="caseType"></p>
+
+      </div>
+
+
+      <div class="result-section">
+
+        <h3>Priority</h3>
+
+        <p id="priority"></p>
+
+      </div>
+
+
+      <div class="result-section">
+
+        <h3>Evidence Checklist</h3>
+
+        <ul class="evidence-list">
+          <li>Payment / transaction proof</li>
+          <li>Order, booking, or subscription proof</li>
+          <li>Refund / cancellation proof if available</li>
+          <li>Previous communication with the merchant</li>
+        </ul>
+
+      </div>
+
+
+      <div class="result-section">
+
+        <h3>Recommended Recovery Action</h3>
+
+        <p id="nextAction"></p>
+
+      </div>
+
+
+      <div class="result-section">
+
+        <h3>Recovery Message</h3>
+
+        <div class="message-box" id="recoveryMessage"></div>
+
+      </div>
+
+    </div>
+
+
+    <div class="footer">
+      Consumer Recovery Agent — Prototype
     </div>
 
   </div>
 
+
   <script>
+
     document
       .getElementById("recoveryForm")
       .addEventListener("submit", function(event) {
 
         event.preventDefault();
 
+
         const merchant =
-          document.getElementById("merchant").value;
+          document.getElementById("merchant").value.trim();
 
         const amount =
-          document.getElementById("amount").value;
+          document.getElementById("amount").value.trim();
 
         const problem =
-          document.getElementById("problem").value;
+          document.getElementById("problem").value.trim();
 
         const goal =
-          document.getElementById("goal").value;
+          document.getElementById("goal").value.trim();
 
-        document.getElementById("result").style.display = "block";
 
-        document.getElementById("caseDetails").innerHTML =
-          "Merchant: " + merchant +
-          "<br>Amount: ₹" + amount +
-          "<br><br>Problem: " + problem +
-          "<br><br>Recovery Goal: " + goal;
+        document.getElementById("caseSummary").textContent =
+          "You reported a recovery issue with " +
+          merchant +
+          " involving ₹" +
+          amount +
+          ". Your requested recovery is: " +
+          goal;
+
+
+        document.getElementById("caseType").textContent =
+          "Consumer payment / refund recovery";
+
+
+        document.getElementById("priority").textContent =
+          "Standard — priority can be adjusted after reviewing the evidence and case details.";
+
+
+        document.getElementById("nextAction").textContent =
+          "Review the available evidence, confirm the transaction details, and send the merchant a clear written recovery request. If the merchant does not resolve the issue, the case can move to an escalation step.";
+
+
+        document.getElementById("recoveryMessage").textContent =
+          "Subject: Request for Resolution — ₹" +
+          amount +
+          "\n\n" +
+          "Hello " +
+          merchant +
+          " Support Team,\n\n" +
+          "I am contacting you regarding the following issue:\n\n" +
+          problem +
+          "\n\n" +
+          "I am requesting the following resolution:\n" +
+          goal +
+          "\n\n" +
+          "Please review this matter and confirm the resolution and expected timeline.\n\n" +
+          "Thank you.";
+
+
+        document.getElementById("results").style.display = "block";
+
+
+        document.getElementById("results").scrollIntoView({
+          behavior: "smooth"
+        });
+
       });
-  // Recovery analysis
-        const analysisBox = document.createElement("div");
 
-        analysisBox.style.marginTop = "20px";
-        analysisBox.style.padding = "20px";
-        analysisBox.style.background = "#eef4ff";
-        analysisBox.style.borderRadius = "10px";
-        analysisBox.style.border = "1px solid #c7d7fe";
-
-        analysisBox.innerHTML =
-          "<h2>Recovery Analysis</h2>" +
-          "<p><strong>Case Type:</strong> Refund / Payment Recovery</p>" +
-          "<p><strong>Priority:</strong> Standard</p>" +
-          "<p><strong>Next Action:</strong> Review the evidence and contact the merchant with the refund request.</p>" +
-          "<p><strong>Evidence Needed:</strong> Order proof, payment proof, return/cancellation proof, and previous communication with the merchant.</p>";
-
-        document.getElementById("result").appendChild(analysisBox);</script>
+  </script>
 
 </body>
 </html>
