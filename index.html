@@ -13,72 +13,86 @@
 
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
       background: #f5f7fb;
       color: #172033;
     }
 
     .container {
-      max-width: 850px;
-      margin: 50px auto;
-      padding: 20px;
+      width: min(100% - 32px, 900px);
+      margin: 0 auto;
     }
 
-    .header {
-      background: #111827;
+    header {
+      background: #172033;
       color: white;
-      padding: 35px;
-      border-radius: 18px;
-      margin-bottom: 25px;
+      padding: 24px 0;
     }
 
-    .header h1 {
-      margin: 0 0 12px;
-      font-size: 34px;
-    }
-
-    .header p {
+    header h1 {
       margin: 0;
-      color: #d1d5db;
+      font-size: 28px;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      color: #d9deea;
+      line-height: 1.5;
+    }
+
+    .hero {
+      padding: 45px 0 25px;
+    }
+
+    .hero h2 {
+      margin: 0 0 10px;
+      font-size: 32px;
+    }
+
+    .hero p {
+      margin: 0;
+      color: #5e687b;
       line-height: 1.6;
-      font-size: 16px;
     }
 
     .card {
       background: white;
-      padding: 30px;
-      border-radius: 18px;
-      margin-bottom: 25px;
-      box-shadow: 0 5px 25px rgba(0,0,0,0.06);
+      border: 1px solid #e1e5ed;
+      border-radius: 14px;
+      padding: 28px;
+      margin: 20px 0;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
     }
 
-    .card h2 {
+    .card h3 {
       margin-top: 0;
-      margin-bottom: 8px;
+      font-size: 22px;
     }
 
-    .card-description {
-      color: #667085;
-      line-height: 1.5;
-      margin-bottom: 25px;
+    .form-group {
+      margin-bottom: 20px;
     }
 
     label {
       display: block;
-      margin-top: 20px;
+      font-weight: 600;
       margin-bottom: 8px;
-      font-weight: bold;
     }
 
     input,
-    textarea,
-    select {
+    textarea {
       width: 100%;
-      padding: 13px;
-      border: 1px solid #d0d5dd;
-      border-radius: 9px;
+      padding: 13px 14px;
+      border: 1px solid #cfd5df;
+      border-radius: 8px;
       font-size: 15px;
-      font-family: Arial, sans-serif;
+      font-family: inherit;
+      outline: none;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: #172033;
     }
 
     textarea {
@@ -86,28 +100,25 @@
       resize: vertical;
     }
 
-    input:focus,
-    textarea:focus,
-    select:focus {
-      outline: none;
-      border-color: #111827;
+    input[type="file"] {
+      padding: 10px;
+      background: #fafbfc;
     }
 
-    .button {
+    button {
       width: 100%;
-      margin-top: 28px;
-      padding: 16px;
       border: none;
-      border-radius: 10px;
-      background: #111827;
+      border-radius: 8px;
+      padding: 15px;
+      background: #172033;
       color: white;
       font-size: 16px;
-      font-weight: bold;
+      font-weight: 600;
       cursor: pointer;
     }
 
-    .button:hover {
-      opacity: 0.9;
+    button:hover {
+      background: #27344d;
     }
 
     #results {
@@ -118,219 +129,382 @@
       display: inline-block;
       padding: 7px 12px;
       border-radius: 20px;
-      background: #fff7ed;
-      color: #9a3412;
+      background: #e8f5e9;
+      color: #246b2a;
       font-size: 13px;
-      font-weight: bold;
-      margin-bottom: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
     }
 
     .result-section {
-      border-top: 1px solid #eaecf0;
-      padding-top: 20px;
-      margin-top: 20px;
+      margin-top: 24px;
     }
 
-    .result-section h3 {
+    .result-section h4 {
       margin-bottom: 8px;
+      font-size: 16px;
     }
 
-    .result-section p {
-      color: #475467;
+    .result-box {
+      background: #f7f8fa;
+      border: 1px solid #e2e6ed;
+      border-radius: 8px;
+      padding: 15px;
       line-height: 1.6;
-    }
-
-    .message-box {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      padding: 18px;
-      border-radius: 10px;
-      line-height: 1.6;
-      white-space: pre-line;
+      white-space: pre-wrap;
     }
 
     .evidence-list {
-      padding-left: 20px;
-      line-height: 1.9;
-      color: #475467;
+      margin: 0;
+      padding-left: 22px;
+      line-height: 1.8;
     }
 
-    .footer {
+    footer {
       text-align: center;
-      color: #98a2b3;
+      color: #7a8495;
+      padding: 30px 0 45px;
       font-size: 13px;
-      padding: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .hero h2 {
+        font-size: 26px;
+      }
+
+      .card {
+        padding: 20px;
+      }
     }
   </style>
 </head>
 
 <body>
 
-  <div class="container">
-
-    <div class="header">
+  <header>
+    <div class="container">
       <h1>Consumer Recovery Agent</h1>
       <p>
-        Tell us what went wrong. The agent will structure your case,
-        identify what evidence is needed, and prepare the next recovery action.
+        Turn a consumer problem into a structured recovery case.
       </p>
     </div>
+  </header>
 
+  <main class="container">
 
-    <div class="card">
-
-      <h2>Start a Recovery Case</h2>
-
-      <p class="card-description">
-        Give us the basic details of your problem so we can analyze the case.
+    <section class="hero">
+      <h2>Recover what you are owed.</h2>
+      <p>
+        Tell us what went wrong. The agent will structure your case,
+        identify the evidence needed, and prepare the next recovery action.
       </p>
+    </section>
 
+    <section class="card">
+      <h3>Start a Recovery Case</h3>
 
       <form id="recoveryForm">
 
-        <label for="merchant">
-          Merchant / Company
-        </label>
+        <div class="form-group">
+          <label for="merchant">Merchant / Company</label>
+          <input
+            type="text"
+            id="merchant"
+            placeholder="e.g. Amazon"
+            required
+          >
+        </div>
 
-        <input
-          type="text"
-          id="merchant"
-          placeholder="Example: Amazon"
-          required
-        >
+        <div class="form-group">
+          <label for="amount">Amount involved</label>
+          <input
+            type="number"
+            id="amount"
+            placeholder="e.g. 4999"
+            min="0"
+            step="0.01"
+            required
+          >
+        </div>
 
+        <div class="form-group">
+          <label for="problem">What happened?</label>
+          <textarea
+            id="problem"
+            placeholder="Explain what went wrong..."
+            required
+          ></textarea>
+        </div>
 
-        <label for="amount">
-          Amount involved
-        </label>
+        <div class="form-group">
+          <label for="goal">What do you want recovered?</label>
+          <textarea
+            id="goal"
+            placeholder="Tell us what resolution you want..."
+            required
+          ></textarea>
+        </div>
 
-        <input
-          type="number"
-          id="amount"
-          placeholder="Example: 4999"
-          required
-        >
+        <div class="form-group">
+          <label for="evidence">Upload evidence</label>
+          <input
+            type="file"
+            id="evidence"
+            multiple
+          >
+        </div>
 
-
-        <label for="problem">
-          What happened?
-        </label>
-
-        <textarea
-          id="problem"
-          placeholder="Explain what happened in your own words..."
-          required
-        ></textarea>
-
-
-        <label for="goal">
-          What do you want recovered?
-        </label>
-
-        <textarea
-          id="goal"
-          placeholder="Example: I want my full refund of ₹4,999."
-          required
-        ></textarea>
-
-
-        <label for="evidence">
-          Upload evidence
-        </label>
-
-        <input
-          type="file"
-          id="evidence"
-          multiple
-        >
-
-
-        <button class="button" type="submit">
+        <button type="submit">
           Analyze My Case →
         </button>
 
       </form>
+    </section>
 
-    </div>
+    <section class="card" id="results">
 
-
-    <div class="card" id="results">
-
-      <span class="status">
+      <div class="status">
         CASE STATUS: ANALYZED
-      </span>
-
-      <h2>Recovery Case Analysis</h2>
-
-      <div class="result-section">
-
-        <h3>Case Summary</h3>
-
-        <p id="caseSummary"></p>
-
       </div>
 
+      <h3>Recovery Case Analysis</h3>
 
       <div class="result-section">
-
-        <h3>Case Type</h3>
-
-        <p id="caseType"></p>
-
+        <h4>Case Summary</h4>
+        <div class="result-box" id="caseSummary"></div>
       </div>
-
 
       <div class="result-section">
-
-        <h3>Priority</h3>
-
-        <p id="priority"></p>
-
+        <h4>Case Type</h4>
+        <div class="result-box" id="caseType"></div>
       </div>
-
 
       <div class="result-section">
-
-        <h3>Evidence Checklist</h3>
-
-        <ul class="evidence-list">
-          <li>Payment / transaction proof</li>
-          <li>Order, booking, or subscription proof</li>
-          <li>Refund / cancellation proof if available</li>
-          <li>Previous communication with the merchant</li>
-        </ul>
-
+        <h4>Priority</h4>
+        <div class="result-box" id="priority"></div>
       </div>
-
 
       <div class="result-section">
-
-        <h3>Recommended Recovery Action</h3>
-
-        <p id="nextAction"></p>
-
+        <h4>Evidence Checklist</h4>
+        <ul class="evidence-list" id="evidenceList"></ul>
       </div>
-
 
       <div class="result-section">
-
-        <h3>Recovery Message</h3>
-
-        <div class="message-box" id="recoveryMessage"></div>
-
+        <h4>Recommended Recovery Action</h4>
+        <div class="result-box" id="nextAction"></div>
       </div>
 
-    </div>
+      <div class="result-section">
+        <h4>Recovery Message</h4>
+        <div class="result-box" id="recoveryMessage"></div>
+      </div>
 
+    </section>
 
-    <div class="footer">
-      Consumer Recovery Agent — Prototype
-    </div>
+  </main>
 
-  </div>
+  <footer>
+    Consumer Recovery Agent — MVP Prototype
+  </footer>
 
 
   <script>
+
+    /*
+      CASE CLASSIFICATION ENGINE — VERSION 1
+
+      This is rule-based logic for the MVP.
+      It is NOT a real AI model yet.
+    */
+
+    function classifyCase(problem, goal) {
+
+      const text = (problem + " " + goal).toLowerCase();
+
+
+      // 1. REFUND RECOVERY
+
+      if (
+        text.includes("refund") ||
+        text.includes("money back") ||
+        text.includes("returned") ||
+        text.includes("return")
+      ) {
+
+        return {
+
+          type: "Refund Recovery",
+
+          priority: "Standard",
+
+          evidence: [
+            "Payment / transaction proof",
+            "Order or purchase proof",
+            "Return or refund confirmation if available",
+            "Previous communication with the merchant"
+          ],
+
+          action:
+            "Verify the payment and return/refund status, then request the merchant to confirm the refund and expected completion date."
+
+        };
+      }
+
+
+      // 2. SUBSCRIPTION ISSUE
+
+      if (
+        text.includes("subscription") ||
+        text.includes("recurring") ||
+        text.includes("auto-renew") ||
+        text.includes("auto renew") ||
+        text.includes("membership") ||
+        text.includes("renewal")
+      ) {
+
+        return {
+
+          type: "Subscription Issue",
+
+          priority: "Standard",
+
+          evidence: [
+            "Subscription receipt or invoice",
+            "Subscription plan details",
+            "Cancellation request if already made",
+            "Evidence of recurring charge",
+            "Previous communication with the merchant"
+          ],
+
+          action:
+            "Verify the subscription status and recurring charge, then request cancellation and the appropriate resolution for any disputed charge."
+
+        };
+      }
+
+
+      // 3. CANCELLATION DISPUTE
+
+      if (
+        text.includes("cancel") ||
+        text.includes("cancellation") ||
+        text.includes("terminate") ||
+        text.includes("close account")
+      ) {
+
+        return {
+
+          type: "Cancellation Dispute",
+
+          priority: "Standard",
+
+          evidence: [
+            "Order, booking, or account details",
+            "Cancellation request or confirmation",
+            "Proof of any charge after cancellation",
+            "Previous communication with the merchant"
+          ],
+
+          action:
+            "Verify when the cancellation was requested, ask the merchant to confirm the cancellation status, and request resolution for any charge or service continuing after cancellation."
+
+        };
+      }
+
+
+      // 4. PRODUCT DISPUTE
+
+      if (
+        text.includes("wrong product") ||
+        text.includes("wrong item") ||
+        text.includes("damaged") ||
+        text.includes("defective") ||
+        text.includes("broken") ||
+        text.includes("missing item") ||
+        text.includes("product issue") ||
+        text.includes("product problem")
+      ) {
+
+        return {
+
+          type: "Product Dispute",
+
+          priority: "Standard",
+
+          evidence: [
+            "Order / purchase proof",
+            "Delivery proof",
+            "Photos or video showing the product issue",
+            "Product details or invoice",
+            "Previous communication with the merchant"
+          ],
+
+          action:
+            "Document the product issue, verify the order and delivery details, then request the appropriate resolution such as replacement, repair, or refund."
+
+        };
+      }
+
+
+      // 5. PAYMENT / SERVICE DISPUTE
+
+      if (
+        text.includes("payment") ||
+        text.includes("charged") ||
+        text.includes("debited") ||
+        text.includes("transaction") ||
+        text.includes("booking failed") ||
+        text.includes("service not received") ||
+        text.includes("paid")
+      ) {
+
+        return {
+
+          type: "Payment / Service Dispute",
+
+          priority: "Standard",
+
+          evidence: [
+            "Payment / transaction proof",
+            "Transaction or reference ID",
+            "Invoice, booking, or service proof",
+            "Evidence showing the service was not received or failed",
+            "Previous communication with the merchant"
+          ],
+
+          action:
+            "Verify the transaction and service status, then send a clear recovery request asking the merchant to resolve the failed payment or service."
+
+        };
+      }
+
+
+      // 6. OTHER / NEEDS REVIEW
+
+      return {
+
+        type: "Other / Needs Review",
+
+        priority: "Standard",
+
+        evidence: [
+          "Payment or transaction proof if applicable",
+          "Order, booking, or account details",
+          "Relevant screenshots or documents",
+          "Previous communication with the merchant"
+        ],
+
+        action:
+          "Collect the available evidence and review the case details before selecting the appropriate recovery path."
+
+      };
+
+    }
+
+
+    /*
+      FORM SUBMISSION
+    */
 
     document
       .getElementById("recoveryForm")
@@ -352,6 +526,14 @@
           document.getElementById("goal").value.trim();
 
 
+        // Run classification engine
+
+        const caseData =
+          classifyCase(problem, goal);
+
+
+        // Case summary
+
         document.getElementById("caseSummary").textContent =
           "You reported a recovery issue with " +
           merchant +
@@ -361,37 +543,92 @@
           goal;
 
 
-        document.getElementById("caseType").textContent =
-          "Consumer payment / refund recovery";
+        // Dynamic case type
 
+        document.getElementById("caseType").textContent =
+          caseData.type;
+
+
+        // Priority
 
         document.getElementById("priority").textContent =
-          "Standard — priority can be adjusted after reviewing the evidence and case details.";
+          caseData.priority +
+          " — final priority can be adjusted after reviewing the evidence and case details.";
 
+
+        // Dynamic evidence checklist
+
+        const evidenceList =
+          document.getElementById("evidenceList");
+
+        evidenceList.innerHTML = "";
+
+
+        caseData.evidence.forEach(function(item) {
+
+          const li =
+            document.createElement("li");
+
+          li.textContent = item;
+
+          evidenceList.appendChild(li);
+
+        });
+
+
+        // Dynamic next action
 
         document.getElementById("nextAction").textContent =
-          "Review the available evidence, confirm the transaction details, and send the merchant a clear written recovery request. If the merchant does not resolve the issue, the case can move to an escalation step.";
+          caseData.action;
 
+
+        // Dynamic recovery message
 
         document.getElementById("recoveryMessage").textContent =
-          "Subject: Request for Resolution — ₹" +
+
+          "Subject: " +
+          caseData.type +
+          " — Request for Resolution — ₹" +
           amount +
+
           "\n\n" +
+
           "Hello " +
           merchant +
-          " Support Team,\n\n" +
-          "I am contacting you regarding the following issue:\n\n" +
+          " Support Team," +
+
+          "\n\n" +
+
+          "I am contacting you regarding the following issue:" +
+
+          "\n\n" +
+
           problem +
+
           "\n\n" +
-          "I am requesting the following resolution:\n" +
+
+          "I am requesting the following resolution:" +
+
+          "\n" +
+
           goal +
+
           "\n\n" +
-          "Please review this matter and confirm the resolution and expected timeline.\n\n" +
+
+          "Please review this matter and confirm the resolution and expected timeline." +
+
+          "\n\n" +
+
           "Thank you.";
 
 
-        document.getElementById("results").style.display = "block";
+        // Show results
 
+        document.getElementById("results").style.display =
+          "block";
+
+
+        // Scroll to results
 
         document.getElementById("results").scrollIntoView({
           behavior: "smooth"
