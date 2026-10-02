@@ -1,9 +1,8 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Consumer Recovery Agent</title>
 
   <style>
@@ -66,25 +65,21 @@
 
     .card h3 {
       margin-top: 0;
-      font-size: 22px;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 22px;
     }
 
     label {
       display: block;
-      font-weight: 600;
-      margin-bottom: 8px;
+      font-weight: bold;
+      margin: 18px 0 8px;
     }
 
     input,
     textarea {
       width: 100%;
       padding: 13px 14px;
-      border: 1px solid #cfd5df;
-      border-radius: 8px;
+      border: 1px solid #ccd3df;
+      border-radius: 9px;
       font-size: 15px;
       font-family: inherit;
       outline: none;
@@ -96,80 +91,151 @@
     }
 
     textarea {
-      min-height: 120px;
+      min-height: 130px;
       resize: vertical;
     }
 
     input[type="file"] {
-      padding: 10px;
-      background: #fafbfc;
+      background: #f8f9fc;
+      padding: 12px;
+    }
+
+    .file-note {
+      margin-top: 8px;
+      color: #687386;
+      font-size: 13px;
     }
 
     button {
       width: 100%;
+      margin-top: 24px;
+      padding: 14px 18px;
       border: none;
-      border-radius: 8px;
-      padding: 15px;
+      border-radius: 9px;
       background: #172033;
       color: white;
       font-size: 16px;
-      font-weight: 600;
+      font-weight: bold;
       cursor: pointer;
     }
 
     button:hover {
-      background: #27344d;
+      opacity: 0.92;
     }
 
-    #results {
-      display: none;
+    .secondary-button {
+      background: #eef1f6;
+      color: #172033;
     }
 
     .status {
       display: inline-block;
-      padding: 7px 12px;
-      border-radius: 20px;
-      background: #e8f5e9;
-      color: #246b2a;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: #e8f5ec;
+      color: #176b37;
       font-size: 13px;
-      font-weight: 700;
-      margin-bottom: 16px;
+      font-weight: bold;
+      margin-bottom: 18px;
     }
 
     .result-section {
-      margin-top: 24px;
+      display: none;
     }
 
-    .result-section h4 {
-      margin-bottom: 8px;
-      font-size: 16px;
+    .result-item {
+      border-top: 1px solid #e8ebf1;
+      padding: 18px 0;
     }
 
-    .result-box {
-      background: #f7f8fa;
-      border: 1px solid #e2e6ed;
-      border-radius: 8px;
-      padding: 15px;
-      line-height: 1.6;
-      white-space: pre-wrap;
+    .result-item:first-of-type {
+      border-top: none;
     }
 
-    .evidence-list {
+    .result-item h4 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: #687386;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .result-item p {
       margin: 0;
-      padding-left: 22px;
-      line-height: 1.8;
+      line-height: 1.6;
+    }
+
+    .priority-high {
+      color: #a12626;
+      font-weight: bold;
+    }
+
+    .priority-medium {
+      color: #8a5b00;
+      font-weight: bold;
+    }
+
+    .priority-standard {
+      color: #536174;
+      font-weight: bold;
+    }
+
+    .case-id {
+      background: #f5f7fb;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 14px;
+      display: inline-block;
+    }
+
+    ul {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+
+    li {
+      margin: 7px 0;
+      line-height: 1.5;
+    }
+
+    .message-box {
+      background: #f8f9fc;
+      border: 1px solid #e1e5ed;
+      border-radius: 10px;
+      padding: 18px;
+      white-space: pre-line;
+      line-height: 1.6;
+    }
+
+    .disclaimer {
+      font-size: 13px;
+      color: #687386;
+      line-height: 1.6;
+      margin-top: 20px;
     }
 
     footer {
+      padding: 30px 0 45px;
       text-align: center;
       color: #7a8495;
-      padding: 30px 0 45px;
       font-size: 13px;
+    }
+
+    .error {
+      display: none;
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 8px;
+      background: #fff0f0;
+      color: #9b2525;
+      border: 1px solid #f1caca;
+      line-height: 1.5;
     }
 
     @media (max-width: 600px) {
       .hero h2 {
-        font-size: 26px;
+        font-size: 27px;
       }
 
       .card {
@@ -184,9 +250,7 @@
   <header>
     <div class="container">
       <h1>Consumer Recovery Agent</h1>
-      <p>
-        Turn a consumer problem into a structured recovery case.
-      </p>
+      <p>Turn a consumer problem into a structured recovery case.</p>
     </div>
   </header>
 
@@ -203,101 +267,109 @@
     <section class="card">
       <h3>Start a Recovery Case</h3>
 
-      <form id="recoveryForm">
+      <label for="merchant">Merchant / Company</label>
+      <input
+        id="merchant"
+        type="text"
+        placeholder="e.g. Amazon"
+      >
 
-        <div class="form-group">
-          <label for="merchant">Merchant / Company</label>
-          <input
-            type="text"
-            id="merchant"
-            placeholder="e.g. Amazon"
-            required
-          >
-        </div>
+      <label for="amount">Amount involved</label>
+      <input
+        id="amount"
+        type="number"
+        min="0"
+        step="0.01"
+        placeholder="e.g. 2500"
+      >
 
-        <div class="form-group">
-          <label for="amount">Amount involved</label>
-          <input
-            type="number"
-            id="amount"
-            placeholder="e.g. 4999"
-            min="0"
-            step="0.01"
-            required
-          >
-        </div>
+      <label for="problem">What happened?</label>
+      <textarea
+        id="problem"
+        placeholder="Explain what went wrong..."
+      ></textarea>
 
-        <div class="form-group">
-          <label for="problem">What happened?</label>
-          <textarea
-            id="problem"
-            placeholder="Explain what went wrong..."
-            required
-          ></textarea>
-        </div>
+      <label for="goal">What do you want recovered?</label>
+      <textarea
+        id="goal"
+        placeholder="Tell us what resolution you want..."
+      ></textarea>
 
-        <div class="form-group">
-          <label for="goal">What do you want recovered?</label>
-          <textarea
-            id="goal"
-            placeholder="Tell us what resolution you want..."
-            required
-          ></textarea>
-        </div>
+      <label for="evidence">Upload evidence</label>
+      <input
+        id="evidence"
+        type="file"
+        accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx"
+      >
 
-        <div class="form-group">
-          <label for="evidence">Upload evidence</label>
-          <input
-            type="file"
-            id="evidence"
-            multiple
-          >
-        </div>
+      <div class="file-note">
+        Optional: upload a receipt, transaction proof, return proof,
+        refund confirmation, or previous merchant communication.
+      </div>
 
-        <button type="submit">
-          Analyze My Case →
-        </button>
+      <div id="errorMessage" class="error"></div>
 
-      </form>
+      <button id="analyzeButton" type="button">
+        Analyze My Case →
+      </button>
     </section>
 
-    <section class="card" id="results">
+    <section id="resultSection" class="card result-section">
 
-      <div class="status">
-        CASE STATUS: ANALYZED
-      </div>
+      <div class="status">CASE STATUS: ANALYZED</div>
 
       <h3>Recovery Case Analysis</h3>
 
-      <div class="result-section">
+      <div class="result-item">
+        <h4>Case ID</h4>
+        <span id="caseId" class="case-id"></span>
+      </div>
+
+      <div class="result-item">
         <h4>Case Summary</h4>
-        <div class="result-box" id="caseSummary"></div>
+        <p id="caseSummary"></p>
       </div>
 
-      <div class="result-section">
+      <div class="result-item">
         <h4>Case Type</h4>
-        <div class="result-box" id="caseType"></div>
+        <p id="caseType"></p>
       </div>
 
-      <div class="result-section">
+      <div class="result-item">
         <h4>Priority</h4>
-        <div class="result-box" id="priority"></div>
+        <p id="priority"></p>
       </div>
 
-      <div class="result-section">
+      <div class="result-item">
         <h4>Evidence Checklist</h4>
-        <ul class="evidence-list" id="evidenceList"></ul>
+        <ul id="evidenceChecklist"></ul>
       </div>
 
-      <div class="result-section">
+      <div class="result-item">
         <h4>Recommended Recovery Action</h4>
-        <div class="result-box" id="nextAction"></div>
+        <p id="recoveryAction"></p>
       </div>
 
-      <div class="result-section">
+      <div class="result-item">
         <h4>Recovery Message</h4>
-        <div class="result-box" id="recoveryMessage"></div>
+        <div id="recoveryMessage" class="message-box"></div>
       </div>
+
+      <div class="result-item">
+        <h4>Evidence Uploaded</h4>
+        <p id="uploadedEvidence"></p>
+      </div>
+
+      <button id="newCaseButton" class="secondary-button" type="button">
+        Start Another Case
+      </button>
+
+      <p class="disclaimer">
+        Consumer Recovery Agent is currently an MVP prototype.
+        The case classification and recommendations are rule-based
+        and do not yet connect to real merchant systems, payment providers,
+        legal services, or external recovery APIs.
+      </p>
 
     </section>
 
@@ -307,211 +379,230 @@
     Consumer Recovery Agent — MVP Prototype
   </footer>
 
-
   <script>
 
-    /*
-      CASE CLASSIFICATION ENGINE — VERSION 1
+    function containsAny(text, keywords) {
+      const lowerText = text.toLowerCase();
 
-      This is rule-based logic for the MVP.
-      It is NOT a real AI model yet.
-    */
-
-    function classifyCase(problem, goal) {
-
-      const text = (problem + " " + goal).toLowerCase();
-
-
-      // 1. REFUND RECOVERY
-
-      if (
-        text.includes("refund") ||
-        text.includes("money back") ||
-        text.includes("returned") ||
-        text.includes("return")
-      ) {
-
-        return {
-
-          type: "Refund Recovery",
-
-          priority: "Standard",
-
-          evidence: [
-            "Payment / transaction proof",
-            "Order or purchase proof",
-            "Return or refund confirmation if available",
-            "Previous communication with the merchant"
-          ],
-
-          action:
-            "Verify the payment and return/refund status, then request the merchant to confirm the refund and expected completion date."
-
-        };
-      }
-
-
-      // 2. SUBSCRIPTION ISSUE
-
-      if (
-        text.includes("subscription") ||
-        text.includes("recurring") ||
-        text.includes("auto-renew") ||
-        text.includes("auto renew") ||
-        text.includes("membership") ||
-        text.includes("renewal")
-      ) {
-
-        return {
-
-          type: "Subscription Issue",
-
-          priority: "Standard",
-
-          evidence: [
-            "Subscription receipt or invoice",
-            "Subscription plan details",
-            "Cancellation request if already made",
-            "Evidence of recurring charge",
-            "Previous communication with the merchant"
-          ],
-
-          action:
-            "Verify the subscription status and recurring charge, then request cancellation and the appropriate resolution for any disputed charge."
-
-        };
-      }
-
-
-      // 3. CANCELLATION DISPUTE
-
-      if (
-        text.includes("cancel") ||
-        text.includes("cancellation") ||
-        text.includes("terminate") ||
-        text.includes("close account")
-      ) {
-
-        return {
-
-          type: "Cancellation Dispute",
-
-          priority: "Standard",
-
-          evidence: [
-            "Order, booking, or account details",
-            "Cancellation request or confirmation",
-            "Proof of any charge after cancellation",
-            "Previous communication with the merchant"
-          ],
-
-          action:
-            "Verify when the cancellation was requested, ask the merchant to confirm the cancellation status, and request resolution for any charge or service continuing after cancellation."
-
-        };
-      }
-
-
-      // 4. PRODUCT DISPUTE
-
-      if (
-        text.includes("wrong product") ||
-        text.includes("wrong item") ||
-        text.includes("damaged") ||
-        text.includes("defective") ||
-        text.includes("broken") ||
-        text.includes("missing item") ||
-        text.includes("product issue") ||
-        text.includes("product problem")
-      ) {
-
-        return {
-
-          type: "Product Dispute",
-
-          priority: "Standard",
-
-          evidence: [
-            "Order / purchase proof",
-            "Delivery proof",
-            "Photos or video showing the product issue",
-            "Product details or invoice",
-            "Previous communication with the merchant"
-          ],
-
-          action:
-            "Document the product issue, verify the order and delivery details, then request the appropriate resolution such as replacement, repair, or refund."
-
-        };
-      }
-
-
-      // 5. PAYMENT / SERVICE DISPUTE
-
-      if (
-        text.includes("payment") ||
-        text.includes("charged") ||
-        text.includes("debited") ||
-        text.includes("transaction") ||
-        text.includes("booking failed") ||
-        text.includes("service not received") ||
-        text.includes("paid")
-      ) {
-
-        return {
-
-          type: "Payment / Service Dispute",
-
-          priority: "Standard",
-
-          evidence: [
-            "Payment / transaction proof",
-            "Transaction or reference ID",
-            "Invoice, booking, or service proof",
-            "Evidence showing the service was not received or failed",
-            "Previous communication with the merchant"
-          ],
-
-          action:
-            "Verify the transaction and service status, then send a clear recovery request asking the merchant to resolve the failed payment or service."
-
-        };
-      }
-
-
-      // 6. OTHER / NEEDS REVIEW
-
-      return {
-
-        type: "Other / Needs Review",
-
-        priority: "Standard",
-
-        evidence: [
-          "Payment or transaction proof if applicable",
-          "Order, booking, or account details",
-          "Relevant screenshots or documents",
-          "Previous communication with the merchant"
-        ],
-
-        action:
-          "Collect the available evidence and review the case details before selecting the appropriate recovery path."
-
-      };
-
+      return keywords.some(function(keyword) {
+        return lowerText.includes(keyword);
+      });
     }
 
+    function createCaseId() {
+      const randomNumber = Math.floor(100000 + Math.random() * 900000);
+      return "CRA-" + randomNumber;
+    }
 
-    /*
-      FORM SUBMISSION
-    */
+    function classifyCase(problem, goal) {
+      const text = (problem + " " + goal).toLowerCase();
+
+      let caseType = "Other / Needs Review";
+      let priority = "Standard";
+      let evidence = [
+        "Payment / transaction proof",
+        "Order or purchase proof",
+        "Previous communication with the merchant"
+      ];
+      let action =
+        "Review the case details and supporting evidence, then contact the merchant with a clear request for resolution.";
+
+      if (
+        containsAny(text, [
+          "refund",
+          "refunded",
+          "refund not received",
+          "money back",
+          "return money",
+          "cashback not received"
+        ])
+      ) {
+        caseType = "Refund Recovery";
+        priority = "High";
+
+        evidence = [
+          "Payment / transaction proof",
+          "Order or purchase proof",
+          "Return or refund confirmation if available",
+          "Previous communication with the merchant"
+        ];
+
+        action =
+          "Verify the payment and return/refund status, then request the merchant to confirm the refund and expected completion date.";
+      }
+
+      else if (
+        containsAny(text, [
+          "subscription",
+          "membership",
+          "recurring payment",
+          "auto renewal",
+          "autorenewal"
+        ])
+      ) {
+        caseType = "Subscription Issue";
+        priority = "High";
+
+        evidence = [
+          "Subscription or membership details",
+          "Payment / transaction proof",
+          "Cancellation request or communication",
+          "Merchant response if available"
+        ];
+
+        action =
+          "Verify the subscription status, cancellation request, and any recurring charges, then request confirmation of cancellation and any applicable refund.";
+      }
+
+      else if (
+        containsAny(text, [
+          "cancel",
+          "cancellation",
+          "cancelled but",
+          "canceled but"
+        ])
+      ) {
+        caseType = "Cancellation Dispute";
+        priority = "High";
+
+        evidence = [
+          "Original order or service proof",
+          "Cancellation request",
+          "Payment / transaction proof",
+          "Previous merchant communication"
+        ];
+
+        action =
+          "Verify the cancellation request and current order or service status, then request written confirmation of cancellation and the applicable refund or resolution.";
+      }
+
+      else if (
+        containsAny(text, [
+          "wrong product",
+          "wrong item",
+          "damaged",
+          "defective",
+          "broken",
+          "not as described",
+          "missing item",
+          "fake product"
+        ])
+      ) {
+        caseType = "Product Dispute";
+        priority = "Medium";
+
+        evidence = [
+          "Order or purchase proof",
+          "Photos or video of the product if relevant",
+          "Delivery proof",
+          "Previous communication with the merchant"
+        ];
+
+        action =
+          "Document the product issue with supporting evidence, then request the appropriate replacement, refund, or other resolution from the merchant.";
+      }
+
+      else if (
+        containsAny(text, [
+          "charged",
+          "payment",
+          "paid",
+          "debit",
+          "service not provided",
+          "booking failed",
+          "booking",
+          "transaction failed"
+        ])
+      ) {
+        caseType = "Payment / Service Dispute";
+        priority = "High";
+
+        evidence = [
+          "Payment / transaction proof",
+          "Order, booking, or service proof",
+          "Relevant screenshots or confirmation",
+          "Previous merchant communication"
+        ];
+
+        action =
+          "Verify the transaction and service status, then request the merchant to provide the service or issue the appropriate refund or resolution.";
+      }
+
+      return {
+        caseType: caseType,
+        priority: priority,
+        evidence: evidence,
+        action: action
+      };
+    }
+
+    function getPriorityClass(priority) {
+      if (priority === "High") {
+        return "priority-high";
+      }
+
+      if (priority === "Medium") {
+        return "priority-medium";
+      }
+
+      return "priority-standard";
+    }
+
+    function generateRecoveryMessage(
+      merchant,
+      amount,
+      problem,
+      goal,
+      caseType
+    ) {
+      const safeAmount = amount ? "₹" + amount : "the amount involved";
+
+      return (
+        "Subject: " +
+        caseType +
+        " — Request for Resolution — " +
+        safeAmount +
+        "\n\n" +
+
+        "Hello " +
+        merchant +
+        " Support Team,\n\n" +
+
+        "I am contacting you regarding the following issue:\n" +
+        problem +
+        "\n\n" +
+
+        "I am requesting the following resolution:\n" +
+        goal +
+        "\n\n" +
+
+        "Please review this matter and confirm the resolution and expected timeline.\n\n" +
+
+        "Thank you.\n\n" +
+
+        "Consumer Recovery Agent — MVP Prototype"
+      );
+    }
+
+    function showError(message) {
+      const errorBox = document.getElementById("errorMessage");
+
+      errorBox.textContent = message;
+      errorBox.style.display = "block";
+    }
+
+    function clearError() {
+      const errorBox = document.getElementById("errorMessage");
+
+      errorBox.textContent = "";
+      errorBox.style.display = "none";
+    }
 
     document
-      .getElementById("recoveryForm")
-      .addEventListener("submit", function(event) {
+      .getElementById("analyzeButton")
+      .addEventListener("click", function() {
 
-        event.preventDefault();
-
+        clearError();
 
         const merchant =
           document.getElementById("merchant").value.trim();
@@ -525,14 +616,48 @@
         const goal =
           document.getElementById("goal").value.trim();
 
+        const evidenceInput =
+          document.getElementById("evidence");
 
-        // Run classification engine
+        if (!merchant) {
+          showError("Please enter the merchant or company name.");
+          return;
+        }
+
+        if (!amount || Number(amount) <= 0) {
+          showError("Please enter a valid amount.");
+          return;
+        }
+
+        if (!problem) {
+          showError("Please explain what happened.");
+          return;
+        }
+
+        if (!goal) {
+          showError("Please tell us what you want recovered.");
+          return;
+        }
 
         const caseData =
           classifyCase(problem, goal);
 
+        const caseId =
+          createCaseId();
 
-        // Case summary
+        let uploadedEvidence =
+          "No evidence uploaded.";
+
+        if (
+          evidenceInput.files &&
+          evidenceInput.files.length > 0
+        ) {
+          uploadedEvidence =
+            evidenceInput.files[0].name;
+        }
+
+        document.getElementById("caseId").textContent =
+          caseId;
 
         document.getElementById("caseSummary").textContent =
           "You reported a recovery issue with " +
@@ -542,98 +667,78 @@
           ". Your requested recovery is: " +
           goal;
 
-
-        // Dynamic case type
-
         document.getElementById("caseType").textContent =
-          caseData.type;
+          caseData.caseType;
 
+        const priorityElement =
+          document.getElementById("priority");
 
-        // Priority
-
-        document.getElementById("priority").textContent =
+        priorityElement.textContent =
           caseData.priority +
           " — final priority can be adjusted after reviewing the evidence and case details.";
 
+        priorityElement.className =
+          getPriorityClass(caseData.priority);
 
-        // Dynamic evidence checklist
+        const checklist =
+          document.getElementById("evidenceChecklist");
 
-        const evidenceList =
-          document.getElementById("evidenceList");
-
-        evidenceList.innerHTML = "";
-
+        checklist.innerHTML = "";
 
         caseData.evidence.forEach(function(item) {
-
-          const li =
+          const listItem =
             document.createElement("li");
 
-          li.textContent = item;
+          listItem.textContent = item;
 
-          evidenceList.appendChild(li);
-
+          checklist.appendChild(listItem);
         });
 
-
-        // Dynamic next action
-
-        document.getElementById("nextAction").textContent =
+        document.getElementById("recoveryAction").textContent =
           caseData.action;
 
-
-        // Dynamic recovery message
-
         document.getElementById("recoveryMessage").textContent =
+          generateRecoveryMessage(
+            merchant,
+            amount,
+            problem,
+            goal,
+            caseData.caseType
+          );
 
-          "Subject: " +
-          caseData.type +
-          " — Request for Resolution — ₹" +
-          amount +
+        document.getElementById("uploadedEvidence").textContent =
+          uploadedEvidence;
 
-          "\n\n" +
+        const resultSection =
+          document.getElementById("resultSection");
 
-          "Hello " +
-          merchant +
-          " Support Team," +
+        resultSection.style.display = "block";
 
-          "\n\n" +
+        resultSection.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      });
 
-          "I am contacting you regarding the following issue:" +
+    document
+      .getElementById("newCaseButton")
+      .addEventListener("click", function() {
 
-          "\n\n" +
+        document.getElementById("merchant").value = "";
+        document.getElementById("amount").value = "";
+        document.getElementById("problem").value = "";
+        document.getElementById("goal").value = "";
+        document.getElementById("evidence").value = "";
 
-          problem +
+        clearError();
 
-          "\n\n" +
+        document.getElementById("resultSection").style.display =
+          "none";
 
-          "I am requesting the following resolution:" +
-
-          "\n" +
-
-          goal +
-
-          "\n\n" +
-
-          "Please review this matter and confirm the resolution and expected timeline." +
-
-          "\n\n" +
-
-          "Thank you.";
-
-
-        // Show results
-
-        document.getElementById("results").style.display =
-          "block";
-
-
-        // Scroll to results
-
-        document.getElementById("results").scrollIntoView({
+        window.scrollTo({
+          top: 0,
           behavior: "smooth"
         });
-
       });
 
   </script>
