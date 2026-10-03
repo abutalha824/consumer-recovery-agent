@@ -41,7 +41,8 @@ body {
 
 button,
 input,
-textarea {
+textarea,
+select {
   font: inherit;
 }
 
@@ -156,7 +157,8 @@ label {
 }
 
 input,
-textarea {
+textarea,
+select {
   width: 100%;
   border: 1px solid #d0d5dd;
   border-radius: 10px;
@@ -167,7 +169,8 @@ textarea {
 }
 
 input:focus,
-textarea:focus {
+textarea:focus,
+select:focus {
   border-color: #667085;
   box-shadow: 0 0 0 3px rgba(102, 112, 133, 0.12);
 }
@@ -341,19 +344,19 @@ textarea {
 
 .evidence-list {
   list-style: none;
-  margin: 0;
+  margin: 18px 0 0;
   padding: 0;
   display: grid;
-  gap: 10px;
+  gap: 12px;
 }
 
 .evidence-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 13px;
+  padding: 15px;
   border: 1px solid var(--border);
-  border-radius: 11px;
+  border-radius: 12px;
   background: white;
 }
 
@@ -362,24 +365,93 @@ textarea {
   border-color: #abefc6;
 }
 
-.evidence-item input {
-  width: 18px;
-  height: 18px;
-  margin: 0;
+.evidence-icon {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: #f2f4f7;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.evidence-item.completed .evidence-icon {
+  background: #dcfae6;
 }
 
 .evidence-text {
   flex: 1;
+  min-width: 0;
+}
+
+.evidence-name {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.evidence-file {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  word-break: break-word;
 }
 
 .evidence-status {
   font-size: 12px;
   font-weight: 700;
   color: var(--muted);
+  white-space: nowrap;
 }
 
 .evidence-item.completed .evidence-status {
   color: var(--success);
+}
+
+.evidence-upload-button {
+  border: 1px solid #d0d5dd;
+  background: white;
+  color: var(--text);
+  padding: 8px 11px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.evidence-upload-button:hover {
+  background: #f9fafb;
+}
+
+.evidence-item.completed .evidence-upload-button {
+  border-color: #abefc6;
+  color: var(--success);
+}
+
+.evidence-empty {
+  padding: 15px;
+  border: 1px dashed #d0d5dd;
+  border-radius: 11px;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+/* EVIDENCE SUMMARY */
+
+.evidence-summary {
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 11px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.evidence-summary strong {
+  color: var(--text);
 }
 
 /* ACTION */
@@ -448,6 +520,10 @@ textarea {
   border: none;
   background: #15803d;
   color: white;
+}
+
+.success-button:hover {
+  background: #166534;
 }
 
 .danger-button {
@@ -640,6 +716,7 @@ footer {
 /* RESPONSIVE */
 
 @media (max-width: 760px) {
+
   .container {
     width: min(100% - 22px, 1050px);
   }
@@ -685,6 +762,19 @@ footer {
   .saved-case-actions {
     width: 100%;
   }
+
+  .evidence-item {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .evidence-text {
+    min-width: calc(100% - 50px);
+  }
+
+  .evidence-upload-button {
+    margin-left: 46px;
+  }
 }
 </style>
 </head>
@@ -693,6 +783,7 @@ footer {
 
 <header>
   <div class="container header-inner">
+
     <div class="logo-area">
       <h1>Consumer Recovery Agent</h1>
       <p>Turn a consumer problem into a structured recovery case.</p>
@@ -705,22 +796,29 @@ footer {
     >
       My Cases
     </button>
+
   </div>
 </header>
 
 <main class="container">
 
   <section class="hero">
+
     <h2>Recover what you are owed.</h2>
+
     <p>
       Tell us what went wrong. The agent structures your case,
       identifies the evidence needed, and prepares the next recovery action.
     </p>
+
   </section>
 
-  <!-- NEW CASE FORM -->
+  <!-- NEW CASE -->
 
-  <section class="card" id="newCaseSection">
+  <section
+    class="card"
+    id="newCaseSection"
+  >
 
     <h3>Start a Recovery Case</h3>
 
@@ -729,6 +827,7 @@ footer {
       <div class="form-grid">
 
         <div class="form-group">
+
           <label for="merchant">
             Merchant / Company
           </label>
@@ -739,9 +838,11 @@ footer {
             placeholder="e.g. Amazon"
             autocomplete="organization"
           >
+
         </div>
 
         <div class="form-group">
+
           <label for="amount">
             Amount involved
           </label>
@@ -753,9 +854,11 @@ footer {
             min="0"
             step="0.01"
           >
+
         </div>
 
         <div class="form-group full">
+
           <label for="problem">
             What happened?
           </label>
@@ -764,9 +867,11 @@ footer {
             id="problem"
             placeholder="Describe what went wrong..."
           ></textarea>
+
         </div>
 
         <div class="form-group full">
+
           <label for="goal">
             What do you want recovered?
           </label>
@@ -775,9 +880,11 @@ footer {
             id="goal"
             placeholder="Tell us the outcome you want..."
           ></textarea>
+
         </div>
 
         <div class="form-group full">
+
           <label for="evidence">
             Upload evidence
           </label>
@@ -794,6 +901,7 @@ footer {
             return proof, refund confirmation, or previous
             merchant communication.
           </div>
+
         </div>
 
       </div>
@@ -814,7 +922,7 @@ footer {
 
   </section>
 
-  <!-- SAVED CASE DASHBOARD -->
+  <!-- DASHBOARD -->
 
   <section
     class="card dashboard-section"
@@ -822,12 +930,20 @@ footer {
   >
 
     <div class="dashboard-header">
+
       <div>
+
         <h3>My Recovery Cases</h3>
-        <div class="case-count" id="caseCount">
+
+        <div
+          class="case-count"
+          id="caseCount"
+        >
           0 cases
         </div>
+
       </div>
+
     </div>
 
     <div
@@ -855,6 +971,7 @@ footer {
         </span>
 
         <div>
+
           <span
             class="type-badge"
             id="caseTypeBadge"
@@ -868,6 +985,7 @@ footer {
           >
             Standard
           </span>
+
         </div>
 
       </div>
@@ -875,6 +993,7 @@ footer {
       <div class="case-header">
 
         <div>
+
           <h3
             class="case-merchant"
             id="resultMerchant"
@@ -888,6 +1007,7 @@ footer {
           >
             Case ID
           </div>
+
         </div>
 
         <div
@@ -902,6 +1022,7 @@ footer {
       <div class="info-grid">
 
         <div class="info-box">
+
           <div class="info-label">
             Case Type
           </div>
@@ -912,9 +1033,11 @@ footer {
           >
             -
           </div>
+
         </div>
 
         <div class="info-box">
+
           <div class="info-label">
             Priority
           </div>
@@ -925,9 +1048,11 @@ footer {
           >
             -
           </div>
+
         </div>
 
         <div class="info-box">
+
           <div class="info-label">
             Recovery Goal
           </div>
@@ -938,6 +1063,7 @@ footer {
           >
             -
           </div>
+
         </div>
 
       </div>
@@ -1011,7 +1137,7 @@ footer {
           </span>
 
           <span id="evidenceProgressText">
-            0%
+            0 of 0 complete (0%)
           </span>
 
         </div>
@@ -1027,17 +1153,14 @@ footer {
 
       </div>
 
-      <div style="height:18px;"></div>
-
       <ul
         class="evidence-list"
         id="evidenceChecklist"
       ></ul>
 
       <div
+        class="evidence-summary"
         id="evidenceAlert"
-        class="help-text"
-        style="margin-top:14px;"
       ></div>
 
     </div>
@@ -1106,6 +1229,14 @@ footer {
 
       </div>
 
+      <div
+        class="help-text"
+        style="margin-top:12px;"
+      >
+        This MVP prepares the recovery message but does not
+        automatically send it to the merchant.
+      </div>
+
     </div>
 
     <!-- UPLOADED EVIDENCE -->
@@ -1116,10 +1247,7 @@ footer {
 
       <div
         id="uploadedEvidence"
-        class="help-text"
-      >
-        No evidence uploaded.
-      </div>
+      ></div>
 
     </div>
 
@@ -1175,18 +1303,22 @@ footer {
 </main>
 
 <footer>
+
   <div class="container">
 
     <div class="disclaimer">
+
       Consumer Recovery Agent is currently an MVP prototype.
       Case classification and recommendations are rule-based.
       This prototype does not yet connect to real merchant systems,
       payment providers, legal services, or external recovery APIs.
-      Uploaded evidence is not sent to any external service by this
-      prototype.
+      Evidence files are currently tracked locally in this browser
+      by file name only and are not uploaded to an external service.
+
     </div>
 
   </div>
+
 </footer>
 
 <div
@@ -1200,11 +1332,14 @@ footer {
    STORAGE
 ========================================================= */
 
-const STORAGE_KEY = "consumerRecoveryAgentCasesV3";
+const STORAGE_KEY =
+  "consumerRecoveryAgentCasesV3";
 
-let cases = loadCases();
+let cases =
+  loadCases();
 
-let currentCaseId = null;
+let currentCaseId =
+  null;
 
 
 /* =========================================================
@@ -1216,17 +1351,24 @@ function loadCases() {
   try {
 
     const saved =
-      localStorage.getItem(STORAGE_KEY);
+      localStorage.getItem(
+        STORAGE_KEY
+      );
 
     if (!saved) {
       return [];
     }
 
-    const parsed = JSON.parse(saved);
+    const parsed =
+      JSON.parse(saved);
 
-    return Array.isArray(parsed)
-      ? parsed
-      : [];
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return parsed.map(
+      normalizeCase
+    );
 
   } catch (error) {
 
@@ -1237,6 +1379,40 @@ function loadCases() {
 
     return [];
   }
+}
+
+
+function normalizeCase(caseData) {
+
+  if (!Array.isArray(caseData.evidence)) {
+    caseData.evidence = [];
+  }
+
+  caseData.evidence =
+    caseData.evidence.map(
+      item => ({
+        name:
+          item.name || "Evidence item",
+        completed:
+          Boolean(item.completed),
+        fileName:
+          item.fileName || null
+      })
+    );
+
+  if (!Array.isArray(caseData.uploadedFiles)) {
+    caseData.uploadedFiles = [];
+  }
+
+  if (!Array.isArray(caseData.evidenceFiles)) {
+    caseData.evidenceFiles = [];
+  }
+
+  if (!Array.isArray(caseData.activity)) {
+    caseData.activity = [];
+  }
+
+  return caseData;
 }
 
 
@@ -1254,6 +1430,10 @@ function saveCases() {
     console.error(
       "Could not save cases:",
       error
+    );
+
+    showToast(
+      "Could not save changes in this browser."
     );
   }
 }
@@ -1286,15 +1466,21 @@ function formatCurrency(value) {
 }
 
 
-function containsAny(text, words) {
+function containsAny(
+  text,
+  words
+) {
 
   return words.some(
-    word => text.includes(word)
+    word =>
+      text.includes(word)
   );
 }
 
 
-function getPriorityClass(priority) {
+function getPriorityClass(
+  priority
+) {
 
   if (priority === "High") {
     return "priority-high";
@@ -1308,31 +1494,79 @@ function getPriorityClass(priority) {
 }
 
 
-function showToast(message) {
+function showToast(
+  message
+) {
 
   const toast =
-    document.getElementById("toast");
+    document.getElementById(
+      "toast"
+    );
 
-  toast.textContent = message;
+  toast.textContent =
+    message;
 
-  toast.classList.add("show");
+  toast.classList.add(
+    "show"
+  );
 
-  setTimeout(() => {
-
-    toast.classList.remove("show");
-
-  }, 2200);
+  setTimeout(
+    () => {
+      toast.classList.remove(
+        "show"
+      );
+    },
+    2200
+  );
 }
 
 
-function escapeHtml(value) {
+function escapeHtml(
+  value
+) {
 
   return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+    .replaceAll(
+      "&",
+      "&amp;"
+    )
+    .replaceAll(
+      "<",
+      "&lt;"
+    )
+    .replaceAll(
+      ">",
+      "&gt;"
+    )
+    .replaceAll(
+      '"',
+      "&quot;"
+    )
+    .replaceAll(
+      "'",
+      "&#039;"
+    );
+}
+
+
+function formatDate(
+  value
+) {
+
+  const date =
+    new Date(value);
+
+  if (
+    Number.isNaN(
+      date.getTime()
+    )
+  ) {
+    return "Unknown time";
+  }
+
+  return date.toLocaleString(
+    "en-IN"
+  );
 }
 
 
@@ -1340,7 +1574,10 @@ function escapeHtml(value) {
    CASE CLASSIFICATION
 ========================================================= */
 
-function classifyCase(problem, goal) {
+function classifyCase(
+  problem,
+  goal
+) {
 
   const text =
     `${problem} ${goal}`
@@ -1367,14 +1604,17 @@ function classifyCase(problem, goal) {
   /* REFUND */
 
   if (
-    containsAny(text, [
-      "refund",
-      "refunded",
-      "refund not received",
-      "money back",
-      "return money",
-      "cashback not received"
-    ])
+    containsAny(
+      text,
+      [
+        "refund",
+        "refunded",
+        "refund not received",
+        "money back",
+        "return money",
+        "cashback not received"
+      ]
+    )
   ) {
 
     caseType =
@@ -1404,13 +1644,16 @@ function classifyCase(problem, goal) {
   /* SUBSCRIPTION */
 
   else if (
-    containsAny(text, [
-      "subscription",
-      "membership",
-      "recurring",
-      "auto renewal",
-      "auto-renewal"
-    ])
+    containsAny(
+      text,
+      [
+        "subscription",
+        "membership",
+        "recurring",
+        "auto renewal",
+        "auto-renewal"
+      ]
+    )
   ) {
 
     caseType =
@@ -1440,12 +1683,15 @@ function classifyCase(problem, goal) {
   /* CANCELLATION */
 
   else if (
-    containsAny(text, [
-      "cancel",
-      "cancellation",
-      "cancelled",
-      "canceled"
-    ])
+    containsAny(
+      text,
+      [
+        "cancel",
+        "cancellation",
+        "cancelled",
+        "canceled"
+      ]
+    )
   ) {
 
     caseType =
@@ -1475,15 +1721,18 @@ function classifyCase(problem, goal) {
   /* PRODUCT */
 
   else if (
-    containsAny(text, [
-      "wrong product",
-      "damaged",
-      "defective",
-      "broken",
-      "different product",
-      "product issue",
-      "product dispute"
-    ])
+    containsAny(
+      text,
+      [
+        "wrong product",
+        "damaged",
+        "defective",
+        "broken",
+        "different product",
+        "product issue",
+        "product dispute"
+      ]
+    )
   ) {
 
     caseType =
@@ -1513,16 +1762,19 @@ function classifyCase(problem, goal) {
   /* PAYMENT / SERVICE */
 
   else if (
-    containsAny(text, [
-      "charged",
-      "payment",
-      "paid",
-      "debit",
-      "service not provided",
-      "service failed",
-      "payment dispute",
-      "money deducted"
-    ])
+    containsAny(
+      text,
+      [
+        "charged",
+        "payment",
+        "paid",
+        "debit",
+        "service not provided",
+        "service failed",
+        "payment dispute",
+        "money deducted"
+      ]
+    )
   ) {
 
     caseType =
@@ -1624,7 +1876,9 @@ MVP Prototype`
    STATUS HELPERS
 ========================================================= */
 
-function statusDescription(status) {
+function statusDescription(
+  status
+) {
 
   const descriptions = {
 
@@ -1679,7 +1933,8 @@ function createCase(
     classification.checklist.map(
       item => ({
         name: item,
-        completed: false
+        completed: false,
+        fileName: null
       })
     );
 
@@ -1691,15 +1946,20 @@ function createCase(
 
   const newCase = {
 
-    id: caseId,
+    id:
+      caseId,
 
-    merchant,
+    merchant:
+      merchant,
 
-    amount: Number(amount),
+    amount:
+      Number(amount),
 
-    problem,
+    problem:
+      problem,
 
-    goal,
+    goal:
+      goal,
 
     caseType:
       classification.caseType,
@@ -1710,9 +1970,14 @@ function createCase(
     status:
       "Evidence Required",
 
-    evidence,
+    evidence:
+      evidence,
 
-    uploadedFiles,
+    uploadedFiles:
+      uploadedFiles,
+
+    evidenceFiles:
+      [],
 
     actionTitle:
       classification.actionTitle,
@@ -1776,7 +2041,28 @@ function createCase(
       now
   };
 
-  cases.unshift(newCase);
+  if (
+    uploadedFiles.length > 0
+  ) {
+
+    newCase.activity.push({
+
+      title:
+        "Evidence files added",
+
+      description:
+        `${uploadedFiles.length} file(s) were selected during case creation.`,
+
+      time:
+        now
+
+    });
+
+  }
+
+  cases.unshift(
+    newCase
+  );
 
   saveCases();
 
@@ -1791,13 +2077,14 @@ function createCase(
 function getCurrentCase() {
 
   return cases.find(
-    item => item.id === currentCaseId
+    item =>
+      item.id === currentCaseId
   );
 }
 
 
 /* =========================================================
-   RENDER DASHBOARD
+   DASHBOARD
 ========================================================= */
 
 function renderDashboard() {
@@ -1819,7 +2106,9 @@ function renderDashboard() {
         : "cases"
     }`;
 
-  if (cases.length === 0) {
+  if (
+    cases.length === 0
+  ) {
 
     list.innerHTML = `
       <div class="empty-state">
@@ -1832,61 +2121,72 @@ function renderDashboard() {
   }
 
   list.innerHTML =
-    cases.map(item => {
+    cases.map(
+      item => {
 
-      const priorityClass =
-        getPriorityClass(
-          item.priority
-        );
+        const priorityClass =
+          getPriorityClass(
+            item.priority
+          );
 
-      return `
-        <div class="saved-case">
+        const completed =
+          item.evidence.filter(
+            evidence =>
+              evidence.completed
+          ).length;
 
-          <div class="saved-case-main">
+        const total =
+          item.evidence.length;
 
-            <div class="saved-case-title">
-              ${escapeHtml(item.merchant)}
-              · ${escapeHtml(item.caseType)}
+        return `
+          <div class="saved-case">
+
+            <div class="saved-case-main">
+
+              <div class="saved-case-title">
+                ${escapeHtml(item.merchant)}
+                · ${escapeHtml(item.caseType)}
+              </div>
+
+              <div class="saved-case-meta">
+                ${escapeHtml(item.id)}
+                · ${formatCurrency(item.amount)}
+                · ${escapeHtml(item.status)}
+                · Evidence ${completed}/${total}
+              </div>
+
+              <div style="margin-top:7px;">
+                <span class="priority-badge ${priorityClass}">
+                  ${escapeHtml(item.priority)}
+                </span>
+              </div>
+
             </div>
 
-            <div class="saved-case-meta">
-              ${escapeHtml(item.id)}
-              · ${formatCurrency(item.amount)}
-              · ${escapeHtml(item.status)}
-            </div>
+            <div class="saved-case-actions">
 
-            <div style="margin-top:7px;">
-              <span class="priority-badge ${priorityClass}">
-                ${escapeHtml(item.priority)}
-              </span>
+              <button
+                type="button"
+                class="secondary-button"
+                onclick="openCase('${item.id}')"
+              >
+                Open
+              </button>
+
+              <button
+                type="button"
+                class="danger-button"
+                onclick="deleteCaseById('${item.id}')"
+              >
+                Delete
+              </button>
+
             </div>
 
           </div>
-
-          <div class="saved-case-actions">
-
-            <button
-              type="button"
-              class="secondary-button"
-              onclick="openCase('${item.id}')"
-            >
-              Open
-            </button>
-
-            <button
-              type="button"
-              class="danger-button"
-              onclick="deleteCaseById('${item.id}')"
-            >
-              Delete
-            </button>
-
-          </div>
-
-        </div>
-      `;
-
-    }).join("");
+        `;
+      }
+    ).join("");
 }
 
 
@@ -1894,11 +2194,14 @@ function renderDashboard() {
    OPEN CASE
 ========================================================= */
 
-function openCase(caseId) {
+function openCase(
+  caseId
+) {
 
   const selected =
     cases.find(
-      item => item.id === caseId
+      item =>
+        item.id === caseId
     );
 
   if (!selected) {
@@ -1908,25 +2211,42 @@ function openCase(caseId) {
   currentCaseId =
     selected.id;
 
-  renderCase(selected);
+  renderCase(
+    selected
+  );
 
   document
-    .getElementById("newCaseSection")
-    .classList.add("hidden");
+    .getElementById(
+      "newCaseSection"
+    )
+    .classList.add(
+      "hidden"
+    );
 
   document
-    .getElementById("dashboardSection")
-    .classList.add("hidden");
+    .getElementById(
+      "dashboardSection"
+    )
+    .classList.add(
+      "hidden"
+    );
 
   document
-    .getElementById("resultSection")
-    .style.display = "block";
+    .getElementById(
+      "resultSection"
+    )
+    .style.display =
+    "block";
 
   document
-    .getElementById("resultSection")
+    .getElementById(
+      "resultSection"
+    )
     .scrollIntoView({
-      behavior: "smooth",
-      block: "start"
+      behavior:
+        "smooth",
+      block:
+        "start"
     });
 }
 
@@ -1935,7 +2255,9 @@ function openCase(caseId) {
    RENDER CASE
 ========================================================= */
 
-function renderCase(caseData) {
+function renderCase(
+  caseData
+) {
 
   document.getElementById(
     "resultMerchant"
@@ -1983,7 +2305,11 @@ function renderCase(caseData) {
     caseData.priority;
 
   priorityBadge.className =
-    `priority-badge ${getPriorityClass(caseData.priority)}`;
+    `priority-badge ${
+      getPriorityClass(
+        caseData.priority
+      )
+    }`;
 
   const statusBadge =
     document.getElementById(
@@ -2006,7 +2332,9 @@ function renderCase(caseData) {
   ).textContent =
     `You reported a recovery issue with ${caseData.merchant} involving ${formatCurrency(caseData.amount)}. Your requested recovery is: ${caseData.goal}`;
 
-  renderEvidence(caseData);
+  renderEvidence(
+    caseData
+  );
 
   document.getElementById(
     "recoveryActionTitle"
@@ -2042,7 +2370,9 @@ function renderCase(caseData) {
    EVIDENCE RENDERING
 ========================================================= */
 
-function renderEvidence(caseData) {
+function renderEvidence(
+  caseData
+) {
 
   const checklist =
     document.getElementById(
@@ -2054,7 +2384,8 @@ function renderEvidence(caseData) {
 
   const completed =
     caseData.evidence.filter(
-      item => item.completed
+      item =>
+        item.completed
     ).length;
 
   const percentage =
@@ -2074,50 +2405,100 @@ function renderEvidence(caseData) {
   ).style.width =
     `${percentage}%`;
 
-  checklist.innerHTML =
-    caseData.evidence.map(
-      (item, index) => {
+  if (
+    total === 0
+  ) {
 
-        return `
-          <li
-            class="evidence-item ${
-              item.completed
-                ? "completed"
-                : ""
-            }"
-          >
+    checklist.innerHTML = `
+      <li class="evidence-empty">
+        No evidence checklist items were generated.
+      </li>
+    `;
 
-            <input
-              type="checkbox"
-              ${
-                item.completed
-                  ? "checked"
-                  : ""
-              }
-              onchange="toggleEvidence(${index})"
-              id="evidence-${index}"
-            >
+  } else {
 
-            <label
-              class="evidence-text"
-              for="evidence-${index}"
-            >
-              ${escapeHtml(item.name)}
-            </label>
+    checklist.innerHTML =
+      caseData.evidence
+        .map(
+          (item, index) => {
 
-            <span class="evidence-status">
-              ${
-                item.completed
-                  ? "Complete"
-                  : "Needed"
-              }
-            </span>
+            const fileName =
+              item.fileName;
 
-          </li>
-        `;
+            return `
+              <li
+                class="evidence-item ${
+                  item.completed
+                    ? "completed"
+                    : ""
+                }"
+              >
 
-      }
-    ).join("");
+                <div class="evidence-icon">
+                  ${
+                    item.completed
+                      ? "✓"
+                      : "📎"
+                  }
+                </div>
+
+                <div class="evidence-text">
+
+                  <div class="evidence-name">
+                    ${escapeHtml(item.name)}
+                  </div>
+
+                  ${
+                    fileName
+                      ? `
+                        <div class="evidence-file">
+                          File: ${escapeHtml(fileName)}
+                        </div>
+                      `
+                      : `
+                        <div class="evidence-file">
+                          No file attached yet
+                        </div>
+                      `
+                  }
+
+                </div>
+
+                <span class="evidence-status">
+                  ${
+                    item.completed
+                      ? "Complete"
+                      : "Needed"
+                  }
+                </span>
+
+                <button
+                  type="button"
+                  class="evidence-upload-button"
+                  onclick="triggerEvidenceUpload(${index})"
+                >
+                  ${
+                    item.completed
+                      ? "Replace"
+                      : "Upload"
+                  }
+                </button>
+
+                <input
+                  type="file"
+                  id="evidence-file-${index}"
+                  accept=".pdf,.png,.jpg,.jpeg,.webp,.txt"
+                  style="display:none;"
+                  onchange="handleEvidenceUpload(event, ${index})"
+                >
+
+              </li>
+            `;
+
+          }
+        )
+        .join("");
+  }
 
   const alert =
     document.getElementById(
@@ -2127,10 +2508,19 @@ function renderEvidence(caseData) {
   const missing =
     total - completed;
 
-  if (missing > 0) {
+  if (
+    total === 0
+  ) {
 
-    alert.textContent =
-      `${missing} evidence item${
+    alert.innerHTML =
+      "<strong>No evidence checklist available.</strong>";
+
+  } else if (
+    missing > 0
+  ) {
+
+    alert.innerHTML =
+      `<strong>${missing}</strong> evidence item${
         missing === 1
           ? ""
           : "s"
@@ -2138,26 +2528,64 @@ function renderEvidence(caseData) {
         missing === 1
           ? "needs"
           : "need"
-      } attention before the case is fully evidence-ready.`;
+      } attention. Upload the relevant proof for each item.`;
 
   } else {
 
-    alert.textContent =
-      "All checklist items are marked complete. The case is evidence-ready.";
+    alert.innerHTML =
+      "<strong>Evidence ready.</strong> All checklist items are marked complete.";
+
   }
 }
 
 
 /* =========================================================
-   TOGGLE EVIDENCE
+   TRIGGER EVIDENCE UPLOAD
 ========================================================= */
 
-function toggleEvidence(index) {
+function triggerEvidenceUpload(
+  index
+) {
 
   const currentCase =
     getCurrentCase();
 
   if (!currentCase) {
+    return;
+  }
+
+  const input =
+    document.getElementById(
+      `evidence-file-${index}`
+    );
+
+  if (input) {
+    input.click();
+  }
+}
+
+
+/* =========================================================
+   HANDLE EVIDENCE UPLOAD
+========================================================= */
+
+function handleEvidenceUpload(
+  event,
+  index
+) {
+
+  const currentCase =
+    getCurrentCase();
+
+  if (!currentCase) {
+    return;
+  }
+
+  const file =
+    event.target.files &&
+    event.target.files[0];
+
+  if (!file) {
     return;
   }
 
@@ -2167,36 +2595,116 @@ function toggleEvidence(index) {
     return;
   }
 
-  currentCase.evidence[index].completed =
-    !currentCase.evidence[index].completed;
+  const now =
+    new Date().toISOString();
+
+  const evidenceItem =
+    currentCase.evidence[index];
+
+  evidenceItem.completed =
+    true;
+
+  evidenceItem.fileName =
+    file.name;
+
+  if (
+    !Array.isArray(
+      currentCase.evidenceFiles
+    )
+  ) {
+    currentCase.evidenceFiles = [];
+  }
+
+  const existingIndex =
+    currentCase.evidenceFiles.findIndex(
+      item =>
+        item.evidenceName ===
+        evidenceItem.name
+    );
+
+  const evidenceRecord = {
+    evidenceName:
+      evidenceItem.name,
+    fileName:
+      file.name,
+    fileType:
+      file.type || "Unknown",
+    fileSize:
+      file.size,
+    uploadedAt:
+      now
+  };
+
+  if (
+    existingIndex >= 0
+  ) {
+
+    currentCase.evidenceFiles[
+      existingIndex
+    ] =
+      evidenceRecord;
+
+  } else {
+
+    currentCase.evidenceFiles.push(
+      evidenceRecord
+    );
+  }
+
+  if (
+    !Array.isArray(
+      currentCase.uploadedFiles
+    )
+  ) {
+    currentCase.uploadedFiles = [];
+  }
+
+  if (
+    !currentCase.uploadedFiles.includes(
+      file.name
+    )
+  ) {
+
+    currentCase.uploadedFiles.push(
+      file.name
+    );
+
+  }
 
   currentCase.updatedAt =
-    new Date().toISOString();
+    now;
+
+  currentCase.activity.push({
+
+    title:
+      "Evidence uploaded",
+
+    description:
+      `${evidenceItem.name}: ${file.name}`,
+
+    time:
+      now
+
+  });
 
   const completed =
     currentCase.evidence.filter(
-      item => item.completed
+      item =>
+        item.completed
     ).length;
 
   const total =
     currentCase.evidence.length;
 
-  currentCase.activity.push({
-
-    title:
-      "Evidence checklist updated",
-
-    description:
-      `${completed} of ${total} evidence items marked complete.`,
-
-    time:
-      currentCase.updatedAt
-
-  });
-
   if (
     completed === total &&
-    total > 0
+    total > 0 &&
+    (
+      currentCase.status ===
+      "Evidence Required" ||
+      currentCase.status ===
+      "New"
+    )
   ) {
 
     currentCase.status =
@@ -2208,18 +2716,30 @@ function toggleEvidence(index) {
         "Case ready for recovery",
 
       description:
-        "All evidence checklist items are marked complete.",
+        "All required evidence checklist items have been completed.",
 
       time:
-        currentCase.updatedAt
+        now
 
     });
+
+    showToast(
+      "Evidence complete — case ready for recovery"
+    );
+
+  } else {
+
+    showToast(
+      "Evidence uploaded successfully"
+    );
 
   }
 
   saveCases();
 
-  renderCase(currentCase);
+  renderCase(
+    currentCase
+  );
 
   renderDashboard();
 }
@@ -2238,22 +2758,72 @@ function renderUploadedEvidence(
       "uploadedEvidence"
     );
 
+  const records =
+    Array.isArray(
+      caseData.evidenceFiles
+    )
+      ? caseData.evidenceFiles
+      : [];
+
   if (
-    !caseData.uploadedFiles ||
-    caseData.uploadedFiles.length === 0
+    records.length === 0
   ) {
 
-    element.textContent =
-      "No evidence uploaded.";
+    if (
+      Array.isArray(
+        caseData.uploadedFiles
+      ) &&
+      caseData.uploadedFiles.length > 0
+    ) {
+
+      element.innerHTML =
+        caseData.uploadedFiles
+          .map(
+            file =>
+              `<div class="evidence-summary">
+                <strong>File:</strong>
+                ${escapeHtml(file)}
+              </div>`
+          )
+          .join("");
+
+      return;
+    }
+
+    element.innerHTML = `
+      <div class="evidence-empty">
+        No evidence uploaded yet.
+      </div>
+    `;
 
     return;
   }
 
   element.innerHTML =
-    caseData.uploadedFiles
+    records
       .map(
-        file =>
-          `<div>• ${escapeHtml(file)}</div>`
+        record =>
+          `
+            <div class="evidence-summary">
+
+              <strong>
+                ${escapeHtml(record.evidenceName)}
+              </strong>
+
+              <div style="margin-top:4px;">
+                ${escapeHtml(record.fileName)}
+              </div>
+
+              <div style="margin-top:4px;">
+                ${escapeHtml(
+                  record.fileType || "Unknown file type"
+                )}
+                ·
+                ${formatDate(record.uploadedAt)}
+              </div>
+
+            </div>
+          `
       )
       .join("");
 }
@@ -2273,7 +2843,9 @@ function renderTimeline(
     );
 
   if (
-    !caseData.activity ||
+    !Array.isArray(
+      caseData.activity
+    ) ||
     caseData.activity.length === 0
   ) {
 
@@ -2287,32 +2859,31 @@ function renderTimeline(
     caseData.activity
       .slice()
       .reverse()
-      .map(item => {
+      .map(
+        item => {
 
-        const date =
-          new Date(item.time);
+          return `
+            <div class="timeline-item">
 
-        return `
-          <div class="timeline-item">
+              <span class="timeline-dot"></span>
 
-            <span class="timeline-dot"></span>
+              <div class="timeline-title">
+                ${escapeHtml(item.title)}
+              </div>
 
-            <div class="timeline-title">
-              ${escapeHtml(item.title)}
+              <div class="timeline-description">
+                ${escapeHtml(item.description)}
+              </div>
+
+              <div class="timeline-time">
+                ${formatDate(item.time)}
+              </div>
+
             </div>
+          `;
 
-            <div class="timeline-description">
-              ${escapeHtml(item.description)}
-            </div>
-
-            <div class="timeline-time">
-              ${date.toLocaleString("en-IN")}
-            </div>
-
-          </div>
-        `;
-
-      })
+        }
+      )
       .join("");
 }
 
@@ -2333,7 +2904,8 @@ function updateCaseStatus(
   }
 
   if (
-    currentCase.status === newStatus
+    currentCase.status ===
+    newStatus
   ) {
     return;
   }
@@ -2362,7 +2934,9 @@ function updateCaseStatus(
 
   saveCases();
 
-  renderCase(currentCase);
+  renderCase(
+    currentCase
+  );
 
   renderDashboard();
 
@@ -2382,6 +2956,18 @@ function markRecoveryPrepared() {
     getCurrentCase();
 
   if (!currentCase) {
+    return;
+  }
+
+  if (
+    currentCase.status ===
+    "Recovery Prepared"
+  ) {
+
+    showToast(
+      "Recovery is already marked as prepared"
+    );
+
     return;
   }
 
@@ -2406,7 +2992,9 @@ function markRecoveryPrepared() {
 
   saveCases();
 
-  renderCase(currentCase);
+  renderCase(
+    currentCase
+  );
 
   renderDashboard();
 
@@ -2426,10 +3014,13 @@ function deleteCaseById(
 
   const index =
     cases.findIndex(
-      item => item.id === caseId
+      item =>
+        item.id === caseId
     );
 
-  if (index === -1) {
+  if (
+    index === -1
+  ) {
     return;
   }
 
@@ -2488,20 +3079,25 @@ function deleteCaseById(
 
 function resetForm() {
 
-  document.getElementById(
-    "caseForm"
-  ).reset();
+  document
+    .getElementById(
+      "caseForm"
+    )
+    .reset();
 
-  document.getElementById(
-    "formError"
-  ).style.display =
+  document
+    .getElementById(
+      "formError"
+    )
+    .style.display =
     "none";
 
-  document.getElementById(
-    "formError"
-  ).textContent =
+  document
+    .getElementById(
+      "formError"
+    )
+    .textContent =
     "";
-
 }
 
 
@@ -2510,7 +3106,9 @@ function resetForm() {
 ========================================================= */
 
 document
-  .getElementById("caseForm")
+  .getElementById(
+    "caseForm"
+  )
   .addEventListener(
     "submit",
     function(event) {
@@ -2519,35 +3117,47 @@ document
 
       const merchant =
         document
-          .getElementById("merchant")
+          .getElementById(
+            "merchant"
+          )
           .value
           .trim();
 
       const amount =
         document
-          .getElementById("amount")
+          .getElementById(
+            "amount"
+          )
           .value
           .trim();
 
       const problem =
         document
-          .getElementById("problem")
+          .getElementById(
+            "problem"
+          )
           .value
           .trim();
 
       const goal =
         document
-          .getElementById("goal")
+          .getElementById(
+            "goal"
+          )
           .value
           .trim();
 
       const evidenceInput =
         document
-          .getElementById("evidence");
+          .getElementById(
+            "evidence"
+          );
 
       const errorBox =
         document
-          .getElementById("formError");
+          .getElementById(
+            "formError"
+          );
 
       /* VALIDATION */
 
@@ -2601,16 +3211,12 @@ document
       errorBox.style.display =
         "none";
 
-      /* FILE NAMES ONLY
-         The prototype does not upload files
-         to an external server.
-      */
-
       const uploadedFiles =
         Array.from(
           evidenceInput.files || []
         ).map(
-          file => file.name
+          file =>
+            file.name
         );
 
       const newCase =
@@ -2629,26 +3235,42 @@ document
 
       renderDashboard();
 
-      renderCase(newCase);
+      renderCase(
+        newCase
+      );
 
       document
-        .getElementById("newCaseSection")
-        .classList.add("hidden");
+        .getElementById(
+          "newCaseSection"
+        )
+        .classList.add(
+          "hidden"
+        );
 
       document
-        .getElementById("dashboardSection")
-        .classList.add("hidden");
+        .getElementById(
+          "dashboardSection"
+        )
+        .classList.add(
+          "hidden"
+        );
 
       document
-        .getElementById("resultSection")
+        .getElementById(
+          "resultSection"
+        )
         .style.display =
         "block";
 
       document
-        .getElementById("resultSection")
+        .getElementById(
+          "resultSection"
+        )
         .scrollIntoView({
-          behavior: "smooth",
-          block: "start"
+          behavior:
+            "smooth",
+          block:
+            "start"
         });
 
     }
@@ -2660,7 +3282,9 @@ document
 ========================================================= */
 
 document
-  .getElementById("caseStatusSelect")
+  .getElementById(
+    "caseStatusSelect"
+  )
   .addEventListener(
     "change",
     function() {
@@ -2678,7 +3302,9 @@ document
 ========================================================= */
 
 document
-  .getElementById("copyMessageButton")
+  .getElementById(
+    "copyMessageButton"
+  )
   .addEventListener(
     "click",
     async function() {
@@ -2716,7 +3342,9 @@ document
 ========================================================= */
 
 document
-  .getElementById("markPreparedButton")
+  .getElementById(
+    "markPreparedButton"
+  )
   .addEventListener(
     "click",
     markRecoveryPrepared
@@ -2728,7 +3356,9 @@ document
 ========================================================= */
 
 document
-  .getElementById("newCaseButton")
+  .getElementById(
+    "newCaseButton"
+  )
   .addEventListener(
     "click",
     function() {
@@ -2737,18 +3367,24 @@ document
         null;
 
       document
-        .getElementById("resultSection")
+        .getElementById(
+          "resultSection"
+        )
         .style.display =
         "none";
 
       document
-        .getElementById("newCaseSection")
+        .getElementById(
+          "newCaseSection"
+        )
         .classList.remove(
           "hidden"
         );
 
       document
-        .getElementById("dashboardSection")
+        .getElementById(
+          "dashboardSection"
+        )
         .classList.remove(
           "hidden"
         );
@@ -2756,8 +3392,10 @@ document
       resetForm();
 
       window.scrollTo({
-        top: 0,
-        behavior: "smooth"
+        top:
+          0,
+        behavior:
+          "smooth"
       });
 
     }
@@ -2769,7 +3407,9 @@ document
 ========================================================= */
 
 document
-  .getElementById("dashboardButton")
+  .getElementById(
+    "dashboardButton"
+  )
   .addEventListener(
     "click",
     function() {
@@ -2778,18 +3418,24 @@ document
         null;
 
       document
-        .getElementById("resultSection")
+        .getElementById(
+          "resultSection"
+        )
         .style.display =
         "none";
 
       document
-        .getElementById("newCaseSection")
+        .getElementById(
+          "newCaseSection"
+        )
         .classList.remove(
           "hidden"
         );
 
       document
-        .getElementById("dashboardSection")
+        .getElementById(
+          "dashboardSection"
+        )
         .classList.remove(
           "hidden"
         );
@@ -2797,10 +3443,14 @@ document
       renderDashboard();
 
       document
-        .getElementById("dashboardSection")
+        .getElementById(
+          "dashboardSection"
+        )
         .scrollIntoView({
-          behavior: "smooth",
-          block: "start"
+          behavior:
+            "smooth",
+          block:
+            "start"
         });
 
     }
@@ -2812,7 +3462,9 @@ document
 ========================================================= */
 
 document
-  .getElementById("backToDashboardButton")
+  .getElementById(
+    "backToDashboardButton"
+  )
   .addEventListener(
     "click",
     function() {
@@ -2821,18 +3473,24 @@ document
         null;
 
       document
-        .getElementById("resultSection")
+        .getElementById(
+          "resultSection"
+        )
         .style.display =
         "none";
 
       document
-        .getElementById("newCaseSection")
+        .getElementById(
+          "newCaseSection"
+        )
         .classList.remove(
           "hidden"
         );
 
       document
-        .getElementById("dashboardSection")
+        .getElementById(
+          "dashboardSection"
+        )
         .classList.remove(
           "hidden"
         );
@@ -2840,10 +3498,14 @@ document
       renderDashboard();
 
       document
-        .getElementById("dashboardSection")
+        .getElementById(
+          "dashboardSection"
+        )
         .scrollIntoView({
-          behavior: "smooth",
-          block: "start"
+          behavior:
+            "smooth",
+          block:
+            "start"
         });
 
     }
@@ -2855,7 +3517,9 @@ document
 ========================================================= */
 
 document
-  .getElementById("deleteCurrentCaseButton")
+  .getElementById(
+    "deleteCurrentCaseButton"
+  )
   .addEventListener(
     "click",
     function() {
