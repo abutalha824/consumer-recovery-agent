@@ -1,3548 +1,742 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Consumer Recovery Agent</title> 
-
-<style>
-* {
-  box-sizing: border-box;
-}
-
-:root {
-  --bg: #f5f7fb;
-  --card: #ffffff;
-  --text: #172033;
-  --muted: #667085;
-  --border: #e4e7ec;
-  --primary: #172033;
-  --primary-hover: #25324a;
-  --success: #15803d;
-  --warning: #b45309;
-  --danger: #b42318;
-  --info: #175cd3;
-  --shadow: 0 12px 35px rgba(16, 24, 40, 0.08);
-  --radius: 16px;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.5;
-}
-
-button,
-input,
-textarea,
-select {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-.container {
-  width: min(100% - 32px, 1050px);
-  margin: 0 auto;
-}
-
-/* HEADER */
-
-header {
-  background: var(--primary);
-  color: white;
-  padding: 24px 0;
-}
-
-.header-inner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-}
-
-.logo-area h1 {
-  margin: 0;
-  font-size: 26px;
-}
-
-.logo-area p {
-  margin: 4px 0 0;
-  color: #cbd5e1;
-  font-size: 14px;
-}
-
-.header-button {
-  border: 1px solid rgba(255,255,255,0.25);
-  background: transparent;
-  color: white;
-  padding: 10px 16px;
-  border-radius: 10px;
-}
-
-.header-button:hover {
-  background: rgba(255,255,255,0.08);
-}
-
-/* HERO */
-
-.hero {
-  padding: 42px 0 25px;
-}
-
-.hero h2 {
-  margin: 0 0 10px;
-  font-size: 38px;
-  line-height: 1.15;
-}
-
-.hero p {
-  margin: 0;
-  max-width: 720px;
-  color: var(--muted);
-  font-size: 17px;
-}
-
-/* CARDS */
-
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 24px;
-  margin-bottom: 22px;
-}
-
-.card h3 {
-  margin: 0 0 18px;
-  font-size: 21px;
-}
-
-.card h4 {
-  margin: 0 0 10px;
-  font-size: 16px;
-}
-
-/* FORM */
-
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-
-.form-group.full {
-  grid-column: 1 / -1;
-}
-
-label {
-  font-weight: 700;
-  font-size: 14px;
-}
-
-input,
-textarea,
-select {
-  width: 100%;
-  border: 1px solid #d0d5dd;
-  border-radius: 10px;
-  padding: 12px 13px;
-  color: var(--text);
-  background: white;
-  outline: none;
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-  border-color: #667085;
-  box-shadow: 0 0 0 3px rgba(102, 112, 133, 0.12);
-}
-
-textarea {
-  min-height: 120px;
-  resize: vertical;
-}
-
-.help-text {
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.analyze-button {
-  width: 100%;
-  border: none;
-  background: var(--primary);
-  color: white;
-  padding: 14px 18px;
-  border-radius: 10px;
-  font-weight: 700;
-  margin-top: 20px;
-}
-
-.analyze-button:hover {
-  background: var(--primary-hover);
-}
-
-.error-box {
-  display: none;
-  margin-top: 15px;
-  padding: 12px 14px;
-  border-radius: 10px;
-  background: #fef3f2;
-  color: var(--danger);
-  border: 1px solid #fecdca;
-}
-
-/* STATUS */
-
-.status-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-  flex-wrap: wrap;
-  margin-bottom: 18px;
-}
-
-.status-badge,
-.priority-badge,
-.type-badge {
-  display: inline-flex;
-  align-items: center;
-  width: fit-content;
-  padding: 7px 11px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.status-badge {
-  background: #eff8ff;
-  color: var(--info);
-}
-
-.priority-high {
-  background: #fef3f2;
-  color: var(--danger);
-}
-
-.priority-medium {
-  background: #fffaeb;
-  color: var(--warning);
-}
-
-.priority-standard {
-  background: #f2f4f7;
-  color: #475467;
-}
-
-.type-badge {
-  background: #f2f4f7;
-  color: #344054;
-}
-
-/* CASE HEADER */
-
-.case-header {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 20px;
-  align-items: start;
-}
-
-.case-id {
-  color: var(--muted);
-  font-size: 13px;
-  margin-top: 4px;
-}
-
-.case-merchant {
-  margin: 0;
-  font-size: 25px;
-}
-
-.amount {
-  font-size: 28px;
-  font-weight: 800;
-  white-space: nowrap;
-}
-
-/* INFO GRID */
-
-.info-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  margin-top: 20px;
-}
-
-.info-box {
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 15px;
-  background: #fafbfc;
-}
-
-.info-label {
-  color: var(--muted);
-  font-size: 12px;
-  margin-bottom: 5px;
-}
-
-.info-value {
-  font-weight: 700;
-}
-
-/* PROGRESS */
-
-.progress-section {
-  margin-top: 20px;
-}
-
-.progress-top {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 8px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.progress-bar {
-  height: 10px;
-  background: #eaecf0;
-  border-radius: 999px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  width: 0%;
-  background: #172033;
-  border-radius: 999px;
-  transition: width 0.3s ease;
-}
-
-/* EVIDENCE */
-
-.evidence-list {
-  list-style: none;
-  margin: 18px 0 0;
-  padding: 0;
-  display: grid;
-  gap: 12px;
-}
-
-.evidence-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 15px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: white;
-}
-
-.evidence-item.completed {
-  background: #f6fef9;
-  border-color: #abefc6;
-}
-
-.evidence-icon {
-  width: 34px;
-  height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 9px;
-  background: #f2f4f7;
-  font-size: 16px;
-  flex-shrink: 0;
-}
-
-.evidence-item.completed .evidence-icon {
-  background: #dcfae6;
-}
-
-.evidence-text {
-  flex: 1;
-  min-width: 0;
-}
-
-.evidence-name {
-  font-weight: 700;
-  font-size: 14px;
-}
-
-.evidence-file {
-  margin-top: 4px;
-  color: var(--muted);
-  font-size: 12px;
-  word-break: break-word;
-}
-
-.evidence-status {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--muted);
-  white-space: nowrap;
-}
-
-.evidence-item.completed .evidence-status {
-  color: var(--success);
-}
-
-.evidence-upload-button {
-  border: 1px solid #d0d5dd;
-  background: white;
-  color: var(--text);
-  padding: 8px 11px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.evidence-upload-button:hover {
-  background: #f9fafb;
-}
-
-.evidence-item.completed .evidence-upload-button {
-  border-color: #abefc6;
-  color: var(--success);
-}
-
-.evidence-empty {
-  padding: 15px;
-  border: 1px dashed #d0d5dd;
-  border-radius: 11px;
-  color: var(--muted);
-  font-size: 13px;
-  text-align: center;
-}
-
-/* EVIDENCE SUMMARY */
-
-.evidence-summary {
-  margin-top: 16px;
-  padding: 14px;
-  border-radius: 11px;
-  background: #f8fafc;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.evidence-summary strong {
-  color: var(--text);
-}
-
-/* ACTION */
-
-.action-box {
-  border: 1px solid #d9e2f3;
-  background: #f8faff;
-  border-radius: 13px;
-  padding: 18px;
-}
-
-.action-title {
-  font-size: 18px;
-  font-weight: 800;
-  margin-bottom: 7px;
-}
-
-.action-reason {
-  color: var(--muted);
-  margin-bottom: 12px;
-}
-
-.action-next {
-  font-size: 14px;
-  font-weight: 700;
-}
-
-/* MESSAGE */
-
-.message-box {
-  background: #f8fafc;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px;
-  white-space: pre-wrap;
-  font-size: 14px;
-  line-height: 1.65;
-}
-
-.message-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 12px;
-}
-
-.secondary-button,
-.danger-button,
-.success-button {
-  border-radius: 9px;
-  padding: 10px 14px;
-  font-weight: 700;
-}
-
-.secondary-button {
-  border: 1px solid #d0d5dd;
-  background: white;
-  color: var(--text);
-}
-
-.secondary-button:hover {
-  background: #f9fafb;
-}
-
-.success-button {
-  border: none;
-  background: #15803d;
-  color: white;
-}
-
-.success-button:hover {
-  background: #166534;
-}
-
-.danger-button {
-  border: 1px solid #fecdca;
-  background: #fff5f4;
-  color: var(--danger);
-}
-
-/* TIMELINE */
-
-.timeline {
-  position: relative;
-  margin-top: 8px;
-  padding-left: 25px;
-}
-
-.timeline::before {
-  content: "";
-  position: absolute;
-  left: 6px;
-  top: 5px;
-  bottom: 5px;
-  width: 2px;
-  background: #e4e7ec;
-}
-
-.timeline-item {
-  position: relative;
-  padding: 0 0 20px 15px;
-}
-
-.timeline-item:last-child {
-  padding-bottom: 0;
-}
-
-.timeline-dot {
-  position: absolute;
-  left: -24px;
-  top: 4px;
-  width: 12px;
-  height: 12px;
-  background: #172033;
-  border-radius: 50%;
-  border: 3px solid white;
-  box-shadow: 0 0 0 1px #d0d5dd;
-}
-
-.timeline-title {
-  font-weight: 700;
-  font-size: 14px;
-}
-
-.timeline-description {
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.timeline-time {
-  color: #98a2b3;
-  font-size: 12px;
-  margin-top: 3px;
-}
-
-/* DASHBOARD */
-
-.dashboard-section {
-  margin-top: 15px;
-}
-
-.dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 14px;
-}
-
-.dashboard-header h3 {
-  margin: 0;
-}
-
-.case-count {
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.saved-case-list {
-  display: grid;
-  gap: 12px;
-}
-
-.saved-case {
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px;
-  background: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-}
-
-.saved-case-main {
-  min-width: 0;
-}
-
-.saved-case-title {
-  font-weight: 800;
-  margin-bottom: 4px;
-}
-
-.saved-case-meta {
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.saved-case-actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.empty-state {
-  color: var(--muted);
-  text-align: center;
-  padding: 25px 10px;
-}
-
-/* STATUS SELECT */
-
-.status-control {
-  margin-top: 15px;
-}
-
-.status-control select {
-  width: 100%;
-  padding: 11px 12px;
-  border: 1px solid #d0d5dd;
-  border-radius: 10px;
-  background: white;
-  color: var(--text);
-}
-
-/* RESULT */
-
-#resultSection {
-  display: none;
-}
-
-.hidden {
-  display: none !important;
-}
-
-/* FOOTER */
-
-footer {
-  padding: 35px 0 45px;
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.disclaimer {
-  border-top: 1px solid var(--border);
-  padding-top: 18px;
-}
-
-/* TOAST */
-
-.toast {
-  position: fixed;
-  bottom: 22px;
-  left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: #172033;
-  color: white;
-  padding: 11px 16px;
-  border-radius: 10px;
-  font-size: 13px;
-  opacity: 0;
-  pointer-events: none;
-  transition: all 0.25s ease;
-  z-index: 1000;
-}
-
-.toast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-/* RESPONSIVE */
-
-@media (max-width: 760px) {
-
-  .container {
-    width: min(100% - 22px, 1050px);
-  }
-
-  .header-inner {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .hero {
-    padding-top: 30px;
-  }
-
-  .hero h2 {
-    font-size: 30px;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .form-group.full {
-    grid-column: auto;
-  }
-
-  .case-header {
-    grid-template-columns: 1fr;
-  }
-
-  .amount {
-    font-size: 24px;
-  }
-
-  .info-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .saved-case {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .saved-case-actions {
-    width: 100%;
-  }
-
-  .evidence-item {
-    align-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  .evidence-text {
-    min-width: calc(100% - 50px);
-  }
-
-  .evidence-upload-button {
-    margin-left: 46px;
-  }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101828">
+  <title>Consumer Recovery Agent</title>
+  <style>
+    :root{
+      color-scheme: light;
+      --bg:#f4f6fb;--surface:#fff;--surface-soft:#f8faff;--text:#172033;
+      --muted:#667085;--border:#e4e8f0;--navy:#101828;--navy-2:#202e49;
+      --brand:#4f46e5;--brand-dark:#4338ca;--brand-soft:#eef2ff;
+      --green:#15803d;--green-bg:#ecfdf3;--amber:#b45309;--amber-bg:#fffaeb;
+      --red:#b42318;--red-bg:#fef3f2;--blue:#175cd3;--blue-bg:#eff8ff;
+      --shadow:0 10px 30px rgba(16,24,40,.055);--radius:18px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    button,input,textarea,select{font:inherit}
+    button{cursor:pointer}
+    button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #a5b4fc;outline-offset:2px}
+    .shell{width:min(1120px,calc(100% - 36px));margin:0 auto}
+    .topbar{background:linear-gradient(115deg,#101828,#1d2b49);color:#fff;padding:18px 0;box-shadow:0 5px 24px rgba(16,24,40,.12)}
+    .topbar-inner{display:flex;align-items:center;justify-content:space-between;gap:18px}
+    .brand{display:flex;align-items:center;gap:12px;min-width:0}
+    .brand-mark{width:42px;height:42px;display:grid;place-items:center;border-radius:13px;background:linear-gradient(135deg,#818cf8,#4f46e5);font-size:21px;box-shadow:0 6px 16px #080e1c55}
+    .brand h1{font-size:18px;line-height:1.2;margin:0;font-weight:800;letter-spacing:-.35px}
+    .brand p{margin:4px 0 0;color:#c7d2e5;font-size:12px}
+    .button{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;border-radius:11px;padding:10px 15px;font-weight:750;font-size:13px;transition:transform .15s,background .15s,border-color .15s}
+    .button:hover{transform:translateY(-1px)}
+    .button-primary{background:var(--brand);color:white;box-shadow:0 5px 12px #4f46e526}
+    .button-primary:hover{background:var(--brand-dark)}
+    .button-dark{background:#fff;color:var(--navy);border-color:#ffffff4a}
+    .button-quiet{background:#fff;border-color:var(--border);color:var(--text)}
+    .button-quiet:hover{background:#f9fafb}
+    .button-danger{background:#fff5f4;border-color:#fecdca;color:var(--red)}
+    .button-success{background:var(--green);color:#fff}
+    .button-small{padding:7px 10px;font-size:12px;border-radius:9px}
+    main{padding-bottom:34px}
+    .hero{padding:36px 0 22px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px}
+    .eyebrow{display:inline-flex;align-items:center;gap:7px;color:var(--brand);font-size:11px;font-weight:850;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px}
+    .eyebrow-dot{width:7px;height:7px;background:#6366f1;border-radius:50%}
+    .hero h2{font-size:clamp(28px,4vw,42px);line-height:1.08;letter-spacing:-1.3px;margin:0 0 12px;max-width:680px}
+    .hero p{margin:0;max-width:700px;color:var(--muted);font-size:15px}
+    .hero-note{font-size:12px;color:#475467;background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 14px;max-width:235px;flex-shrink:0}
+    .hero-note strong{display:block;color:var(--text);margin-bottom:2px}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:6px 0 22px}
+    .stat{background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:17px 18px;box-shadow:var(--shadow)}
+    .stat-top{display:flex;justify-content:space-between;align-items:center;gap:10px;color:var(--muted);font-size:12px;font-weight:700}
+    .stat-icon{width:32px;height:32px;display:grid;place-items:center;border-radius:10px;background:var(--brand-soft);color:var(--brand);font-size:16px}
+    .stat-value{font-size:26px;line-height:1.2;font-weight:850;letter-spacing:-.6px;margin-top:8px}
+    .stat-help{font-size:11px;color:var(--muted);margin-top:4px}
+    .layout{display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:23px;box-shadow:var(--shadow);margin-bottom:18px;min-width:0}
+    .card-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:19px}
+    .card-heading h3{margin:0;font-size:18px;letter-spacing:-.3px}
+    .card-heading p{margin:5px 0 0;color:var(--muted);font-size:13px}
+    .step-label{font-size:11px;font-weight:800;color:var(--brand);background:var(--brand-soft);padding:6px 9px;border-radius:8px;white-space:nowrap}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .field{display:flex;flex-direction:column;gap:7px;min-width:0}
+    .field.full{grid-column:1/-1}
+    label{font-size:12px;font-weight:800;color:#344054}
+    .optional{font-weight:500;color:#98a2b3}
+    input,textarea,select{width:100%;border:1px solid #d0d5dd;border-radius:11px;background:#fff;color:var(--text);padding:12px 13px;min-width:0;transition:border-color .15s,box-shadow .15s}
+    input::placeholder,textarea::placeholder{color:#98a2b3}
+    input:focus,textarea:focus,select:focus{outline:none;border-color:#818cf8;box-shadow:0 0 0 3px #6366f11a}
+    textarea{min-height:112px;resize:vertical}
+    .hint{font-size:11px;color:var(--muted);line-height:1.5}
+    .file-input{padding:10px;background:var(--surface-soft);font-size:12px}
+    .form-footer{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:20px}
+    .form-footer .hint{max-width:470px}
+    .error{display:none;background:var(--red-bg);border:1px solid #fecdca;color:var(--red);border-radius:10px;padding:11px 13px;margin-top:14px;font-size:13px}
+    .section-header{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:22px 0 13px}
+    .section-header h3{margin:0;font-size:18px;letter-spacing:-.3px}
+    .count{color:var(--muted);font-size:12px}
+    .dashboard-tools{display:flex;gap:10px;margin-bottom:14px}
+    .dashboard-tools input{flex:1}
+    .dashboard-tools select{width:auto;min-width:155px}
+    .case-list{display:grid;gap:11px}
+    .case-row{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px;border:1px solid var(--border);border-radius:14px;background:#fff;transition:border-color .15s,transform .15s}
+    .case-row:hover{border-color:#c7d2fe;transform:translateY(-1px)}
+    .case-main{min-width:0}
+    .case-title{font-weight:800;font-size:14px;overflow-wrap:anywhere}
+    .case-meta{font-size:11px;color:var(--muted);margin-top:5px;overflow-wrap:anywhere}
+    .case-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+    .pill{display:inline-flex;align-items:center;border-radius:999px;padding:5px 9px;font-size:10px;font-weight:800;line-height:1.2}
+    .pill-status{background:var(--blue-bg);color:var(--blue)}
+    .pill-high{background:var(--red-bg);color:var(--red)}
+    .pill-medium{background:var(--amber-bg);color:var(--amber)}
+    .pill-standard{background:#f2f4f7;color:#475467}
+    .case-actions{display:flex;flex-wrap:wrap;gap:7px;flex-shrink:0}
+    .empty-state{text-align:center;padding:34px 18px;border:1px dashed #d0d5dd;border-radius:14px;color:var(--muted);background:#fcfcfd}
+    .empty-icon{font-size:28px;margin-bottom:7px}
+    .empty-state strong{display:block;color:var(--text);font-size:14px;margin-bottom:4px}
+    #resultSection{display:none}
+    .result-top{display:flex;justify-content:space-between;align-items:flex-start;gap:18px}
+    .merchant-name{font-size:24px;font-weight:850;letter-spacing:-.7px;margin:5px 0 3px;overflow-wrap:anywhere}
+    .case-id{font-size:11px;color:var(--muted)}
+    .amount{text-align:right;font-size:27px;font-weight:900;letter-spacing:-.8px;white-space:nowrap}
+    .result-pills{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:15px}
+    .result-summary{color:var(--muted);font-size:13px;margin:16px 0 0}
+    .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}
+    .info-box{background:var(--surface-soft);border:1px solid var(--border);border-radius:12px;padding:13px;min-width:0}
+    .info-label{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);font-weight:800}
+    .info-value{font-size:13px;font-weight:800;margin-top:5px;overflow-wrap:anywhere}
+    .status-control{margin-top:19px;display:grid;grid-template-columns:1fr minmax(200px,280px);gap:12px;align-items:center;padding-top:17px;border-top:1px solid var(--border)}
+    .status-control label{font-size:13px}
+    .progress-wrap{margin:4px 0 17px}
+    .progress-top{display:flex;justify-content:space-between;gap:12px;font-size:11px;font-weight:800;margin-bottom:8px}
+    .progress-track{height:8px;background:#eaecf0;border-radius:99px;overflow:hidden}
+    .progress-fill{height:100%;width:0;background:linear-gradient(90deg,#6366f1,#818cf8);border-radius:99px;transition:width .2s}
+    .evidence-list{display:grid;gap:9px;list-style:none;padding:0;margin:0}
+    .evidence-item{display:flex;align-items:center;gap:11px;padding:12px;border:1px solid var(--border);border-radius:12px;min-width:0}
+    .evidence-item.completed{background:#f6fef9;border-color:#abefc6}
+    .evidence-symbol{display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:#f2f4f7;flex-shrink:0}
+    .evidence-item.completed .evidence-symbol{background:#dcfae6;color:var(--green)}
+    .evidence-copy{flex:1;min-width:0}
+    .evidence-name{font-weight:800;font-size:12px;overflow-wrap:anywhere}
+    .evidence-file{font-size:10px;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
+    .evidence-status{font-size:10px;font-weight:800;color:var(--muted);white-space:nowrap}
+    .evidence-item.completed .evidence-status{color:var(--green)}
+    .evidence-item .button{flex-shrink:0}
+    .note-box{border:1px solid #dbe5ff;background:#f8faff;border-radius:13px;padding:16px}
+    .note-box h4{margin:0 0 5px;font-size:14px}
+    .note-box p{margin:0;color:var(--muted);font-size:12px}
+    .note-box .next-step{margin-top:11px;color:var(--text);font-weight:750}
+    .message-box{white-space:pre-wrap;overflow-wrap:anywhere;background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:16px;font-size:13px;line-height:1.7;max-height:420px;overflow:auto}
+    .button-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .uploaded-list{display:grid;gap:8px}
+    .uploaded-record{border:1px solid var(--border);border-radius:11px;padding:12px}
+    .uploaded-record strong{font-size:12px;overflow-wrap:anywhere;display:block}
+    .uploaded-record span{font-size:10px;color:var(--muted);display:block;margin-top:4px;overflow-wrap:anywhere}
+    .timeline{position:relative;padding-left:24px;display:grid;gap:17px}
+    .timeline:before{content:"";position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:#e4e7ec}
+    .timeline-item{position:relative}
+    .timeline-dot{position:absolute;left:-24px;top:5px;width:12px;height:12px;border-radius:50%;background:#6366f1;border:3px solid white;box-shadow:0 0 0 1px #c7d2fe}
+    .timeline-title{font-size:12px;font-weight:800}
+    .timeline-description{font-size:11px;color:var(--muted);overflow-wrap:anywhere}
+    .timeline-time{font-size:10px;color:#98a2b3;margin-top:3px}
+    .disclaimer{border-top:1px solid var(--border);padding:20px 0 30px;color:var(--muted);font-size:11px}
+    .disclaimer strong{color:#475467}
+    .toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,16px);background:#101828;color:#fff;padding:11px 16px;border-radius:12px;font-size:12px;font-weight:700;box-shadow:0 10px 30px #10182830;opacity:0;pointer-events:none;transition:all .2s;z-index:50;max-width:calc(100% - 30px);text-align:center}
+    .toast.show{opacity:1;transform:translate(-50%,0)}
+    .muted{color:var(--muted)}
+    .hidden{display:none!important}
+    @media(max-width:720px){
+      .shell{width:min(100% - 22px,1120px)}
+      .topbar{padding:14px 0}
+      .brand h1{font-size:16px}
+      .brand p{font-size:11px}
+      .brand-mark{width:38px;height:38px}
+      .topbar .button{padding:9px 11px}
+      .hero{padding:28px 0 18px;display:block}
+      .hero-note{margin-top:15px;max-width:none}
+      .stats{gap:8px}
+      .stat{padding:12px}
+      .stat-value{font-size:22px}
+      .stat-top{font-size:10px;align-items:flex-start}
+      .stat-icon{width:27px;height:27px;font-size:13px}
+      .card{padding:17px;border-radius:15px}
+      .form-grid{grid-template-columns:1fr}
+      .field.full{grid-column:auto}
+      .form-footer{align-items:stretch;flex-direction:column-reverse}
+      .form-footer .button{width:100%}
+      .case-row{align-items:flex-start;flex-direction:column}
+      .case-actions{width:100%}
+      .case-actions .button{flex:1}
+      .dashboard-tools{flex-direction:column}
+      .dashboard-tools select{width:100%}
+      .info-grid{grid-template-columns:1fr}
+      .result-top{flex-direction:column}
+      .amount{text-align:left;font-size:25px}
+      .status-control{grid-template-columns:1fr}
+      .evidence-item{flex-wrap:wrap;align-items:flex-start}
+      .evidence-copy{min-width:calc(100% - 50px)}
+      .evidence-item .button{margin-left:43px}
+      .evidence-status{margin-left:auto}
+      .card-heading{gap:8px}
+    }
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+  </style>
 </head>
-
 <body>
-
-<header>
-  <div class="container header-inner">
-
-    <div class="logo-area">
-      <h1>Consumer Recovery Agent</h1>
-      <p>Turn a consumer problem into a structured recovery case.</p>
-    </div>
-
-    <button
-      type="button"
-      class="header-button"
-      id="dashboardButton"
-    >
-      My Cases
-    </button>
-
-  </div>
-</header>
-
-<main class="container">
-
-  <section class="hero">
-
-    <h2>Recover what you are owed.</h2>
-
-    <p>
-      Tell us what went wrong. The agent structures your case,
-      identifies the evidence needed, and prepares the next recovery action.
-    </p>
-
-  </section>
-
-  <!-- NEW CASE -->
-
-  <section
-    class="card"
-    id="newCaseSection"
-  >
-
-    <h3>Start a Recovery Case</h3>
-
-    <form id="caseForm">
-
-      <div class="form-grid">
-
-        <div class="form-group">
-
-          <label for="merchant">
-            Merchant / Company
-          </label>
-
-          <input
-            type="text"
-            id="merchant"
-            placeholder="e.g. Amazon"
-            autocomplete="organization"
-          >
-
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">↗</div>
+        <div>
+          <h1>Consumer Recovery Agent</h1>
+          <p>A clearer next step for consumer problems</p>
         </div>
-
-        <div class="form-group">
-
-          <label for="amount">
-            Amount involved
-          </label>
-
-          <input
-            type="number"
-            id="amount"
-            placeholder="e.g. 2500"
-            min="0"
-            step="0.01"
-          >
-
-        </div>
-
-        <div class="form-group full">
-
-          <label for="problem">
-            What happened?
-          </label>
-
-          <textarea
-            id="problem"
-            placeholder="Describe what went wrong..."
-          ></textarea>
-
-        </div>
-
-        <div class="form-group full">
-
-          <label for="goal">
-            What do you want recovered?
-          </label>
-
-          <textarea
-            id="goal"
-            placeholder="Tell us the outcome you want..."
-          ></textarea>
-
-        </div>
-
-        <div class="form-group full">
-
-          <label for="evidence">
-            Upload evidence
-          </label>
-
-          <input
-            type="file"
-            id="evidence"
-            multiple
-            accept=".pdf,.png,.jpg,.jpeg,.webp,.txt"
-          >
-
-          <div class="help-text">
-            Optional: upload a receipt, transaction proof,
-            return proof, refund confirmation, or previous
-            merchant communication.
-          </div>
-
-        </div>
-
       </div>
+      <button type="button" class="button button-dark" id="dashboardButton">▦ &nbsp; My cases</button>
+    </div>
+  </header>
 
-      <div
-        id="formError"
-        class="error-box"
-      ></div>
-
-      <button
-        type="submit"
-        class="analyze-button"
-      >
-        Analyze My Case →
-      </button>
-
-    </form>
-
-  </section>
-
-  <!-- DASHBOARD -->
-
-  <section
-    class="card dashboard-section"
-    id="dashboardSection"
-  >
-
-    <div class="dashboard-header">
-
+  <main class="shell">
+    <section class="hero">
       <div>
-
-        <h3>My Recovery Cases</h3>
-
-        <div
-          class="case-count"
-          id="caseCount"
-        >
-          0 cases
-        </div>
-
+        <div class="eyebrow"><span class="eyebrow-dot"></span> Your personal recovery workspace</div>
+        <h2>Turn a consumer problem into a clear next step.</h2>
+        <p>Describe what happened, organize the evidence you have, and prepare a polite, structured message to the company. You stay in control of every action.</p>
       </div>
+      <div class="hero-note"><strong>🔒 Your browser, your cases</strong>Cases are saved in this browser on this device. This prototype does not upload case data to a server.</div>
+    </section>
 
-    </div>
+    <section class="stats" aria-label="Case summary">
+      <div class="stat"><div class="stat-top"><span>Total cases</span><span class="stat-icon">▤</span></div><div class="stat-value" id="statTotal">0</div><div class="stat-help">Cases saved in this browser</div></div>
+      <div class="stat"><div class="stat-top"><span>Needs attention</span><span class="stat-icon">◷</span></div><div class="stat-value" id="statOpen">0</div><div class="stat-help">Cases not marked resolved</div></div>
+      <div class="stat"><div class="stat-top"><span>Marked resolved</span><span class="stat-icon">✓</span></div><div class="stat-value" id="statResolved">0</div><div class="stat-help">Based on your status updates</div></div>
+    </section>
 
-    <div
-      class="saved-case-list"
-      id="savedCaseList"
-    ></div>
-
-  </section>
-
-  <!-- RESULT -->
-
-  <section id="resultSection">
-
-    <!-- CASE OVERVIEW -->
-
-    <div class="card">
-
-      <div class="status-row">
-
-        <span
-          class="status-badge"
-          id="caseStatusBadge"
-        >
-          NEW
-        </span>
-
-        <div>
-
-          <span
-            class="type-badge"
-            id="caseTypeBadge"
-          >
-            Case Type
-          </span>
-
-          <span
-            class="priority-badge priority-standard"
-            id="priorityBadge"
-          >
-            Standard
-          </span>
-
-        </div>
-
+    <section class="card" id="newCaseSection">
+      <div class="card-heading">
+        <div><h3>Start a recovery case</h3><p>Share the basics. You can review the case before taking any action.</p></div>
+        <span class="step-label">STEP 1 OF 2</span>
       </div>
-
-      <div class="case-header">
-
-        <div>
-
-          <h3
-            class="case-merchant"
-            id="resultMerchant"
-          >
-            Merchant
-          </h3>
-
-          <div
-            class="case-id"
-            id="resultCaseId"
-          >
-            Case ID
+      <form id="caseForm" novalidate>
+        <div class="form-grid">
+          <div class="field">
+            <label for="merchant">Merchant / company</label>
+            <input id="merchant" name="merchant" type="text" maxlength="120" placeholder="e.g. Amazon, a bank, a service provider" autocomplete="organization" required>
           </div>
-
+          <div class="field">
+            <label for="amount">Amount involved (₹)</label>
+            <input id="amount" name="amount" type="number" min="0" max="1000000000" step="0.01" placeholder="e.g. 2500" inputmode="decimal" required>
+            <div class="hint">Enter 0 if there is no specific money amount involved.</div>
+          </div>
+          <div class="field full">
+            <label for="problem">What happened?</label>
+            <textarea id="problem" name="problem" maxlength="5000" placeholder="Explain the issue in your own words. Include dates or reference numbers only if useful." required></textarea>
+          </div>
+          <div class="field full">
+            <label for="goal">What outcome do you want?</label>
+            <textarea id="goal" name="goal" maxlength="2500" placeholder="e.g. I want the refund processed, the charge explained, or the product replaced." required></textarea>
+          </div>
+          <div class="field full">
+            <label for="evidence">Choose evidence files <span class="optional">(optional)</span></label>
+            <input class="file-input" id="evidence" name="evidence" type="file" multiple accept=".pdf,.png,.jpg,.jpeg,.webp,.txt">
+            <div class="hint">This prototype records file names and details only. Files are not uploaded or stored by the app. Avoid selecting documents containing passwords, full card numbers, or other sensitive details.</div>
+          </div>
         </div>
-
-        <div
-          class="amount"
-          id="resultAmount"
-        >
-          ₹0
+        <div id="formError" class="error" role="alert"></div>
+        <div class="form-footer">
+          <div class="hint">Your case stays a draft until you review it and decide what to do next. This tool does not contact companies automatically.</div>
+          <button type="submit" class="button button-primary">Create and review case <span aria-hidden="true">→</span></button>
         </div>
+      </form>
+    </section>
 
-      </div>
-
-      <div class="info-grid">
-
-        <div class="info-box">
-
-          <div class="info-label">
-            Case Type
-          </div>
-
-          <div
-            class="info-value"
-            id="resultCaseType"
-          >
-            -
-          </div>
-
-        </div>
-
-        <div class="info-box">
-
-          <div class="info-label">
-            Priority
-          </div>
-
-          <div
-            class="info-value"
-            id="resultPriority"
-          >
-            -
-          </div>
-
-        </div>
-
-        <div class="info-box">
-
-          <div class="info-label">
-            Recovery Goal
-          </div>
-
-          <div
-            class="info-value"
-            id="resultGoal"
-          >
-            -
-          </div>
-
-        </div>
-
-      </div>
-
-      <div class="status-control">
-
-        <label for="caseStatusSelect">
-          Case status
-        </label>
-
-        <select id="caseStatusSelect">
-
-          <option value="New">
-            New
-          </option>
-
-          <option value="Evidence Required">
-            Evidence Required
-          </option>
-
-          <option value="Ready for Recovery">
-            Ready for Recovery
-          </option>
-
-          <option value="Recovery Prepared">
-            Recovery Prepared
-          </option>
-
-          <option value="Waiting for Merchant">
-            Waiting for Merchant
-          </option>
-
-          <option value="Follow-up Required">
-            Follow-up Required
-          </option>
-
-          <option value="Resolved">
-            Resolved
-          </option>
-
+    <section id="dashboardSection">
+      <div class="section-header"><h3>My recovery cases</h3><span class="count" id="caseCount">0 cases</span></div>
+      <div class="dashboard-tools">
+        <input type="search" id="caseSearch" aria-label="Search cases" placeholder="Search by company, case ID, or issue…">
+        <select id="statusFilter" aria-label="Filter cases by status">
+          <option value="all">All statuses</option>
+          <option value="New">New</option>
+          <option value="Evidence Required">Evidence required</option>
+          <option value="Ready for Recovery">Ready for recovery</option>
+          <option value="Recovery Prepared">Recovery prepared</option>
+          <option value="Waiting for Merchant">Waiting for merchant</option>
+          <option value="Follow-up Required">Follow-up required</option>
+          <option value="Resolved">Resolved</option>
         </select>
-
       </div>
+      <div class="case-list" id="savedCaseList"></div>
+    </section>
 
-    </div>
-
-    <!-- CASE SUMMARY -->
-
-    <div class="card">
-
-      <h3>Case Summary</h3>
-
-      <p id="caseSummary">
-        -
-      </p>
-
-    </div>
-
-    <!-- EVIDENCE -->
-
-    <div class="card">
-
-      <h3>Evidence Tracking</h3>
-
-      <div class="progress-section">
-
-        <div class="progress-top">
-
-          <span>
-            Evidence readiness
-          </span>
-
-          <span id="evidenceProgressText">
-            0 of 0 complete (0%)
-          </span>
-
+    <section id="resultSection" aria-live="polite">
+      <div class="card">
+        <div class="result-pills"><span class="pill pill-status" id="caseStatusBadge">NEW</span><span class="pill pill-standard" id="caseTypeBadge">Case type</span><span class="pill pill-standard" id="priorityBadge">Standard priority</span></div>
+        <div class="result-top">
+          <div><div class="eyebrow">CASE OVERVIEW</div><h2 class="merchant-name" id="resultMerchant">Merchant</h2><div class="case-id" id="resultCaseId">Case ID</div></div>
+          <div class="amount" id="resultAmount">₹0</div>
         </div>
-
-        <div class="progress-bar">
-
-          <div
-            class="progress-fill"
-            id="evidenceProgressFill"
-          ></div>
-
+        <div class="info-grid">
+          <div class="info-box"><div class="info-label">Issue category</div><div class="info-value" id="resultCaseType">—</div></div>
+          <div class="info-box"><div class="info-label">Suggested priority</div><div class="info-value" id="resultPriority">—</div></div>
+          <div class="info-box"><div class="info-label">Your requested outcome</div><div class="info-value" id="resultGoal">—</div></div>
         </div>
-
-      </div>
-
-      <ul
-        class="evidence-list"
-        id="evidenceChecklist"
-      ></ul>
-
-      <div
-        class="evidence-summary"
-        id="evidenceAlert"
-      ></div>
-
-    </div>
-
-    <!-- NEXT ACTION -->
-
-    <div class="card">
-
-      <h3>Next Recovery Action</h3>
-
-      <div class="action-box">
-
-        <div
-          class="action-title"
-          id="recoveryActionTitle"
-        >
-          -
+        <p class="result-summary" id="caseSummary"></p>
+        <div class="status-control">
+          <label for="caseStatusSelect">Update case status</label>
+          <select id="caseStatusSelect">
+            <option value="New">New</option>
+            <option value="Evidence Required">Evidence Required</option>
+            <option value="Ready for Recovery">Ready for Recovery</option>
+            <option value="Recovery Prepared">Recovery Prepared</option>
+            <option value="Waiting for Merchant">Waiting for Merchant</option>
+            <option value="Follow-up Required">Follow-up Required</option>
+            <option value="Resolved">Resolved</option>
+          </select>
         </div>
+      </div>
 
-        <div
-          class="action-reason"
-          id="recoveryActionReason"
-        >
-          -
+      <div class="card">
+        <div class="card-heading"><div><h3>Evidence checklist</h3><p>Mark an item complete when you have selected relevant proof for it.</p></div><span class="step-label">STEP 2 OF 2</span></div>
+        <div class="progress-wrap"><div class="progress-top"><span>Evidence readiness</span><span id="evidenceProgressText">0 of 0 complete (0%)</span></div><div class="progress-track"><div class="progress-fill" id="evidenceProgressFill"></div></div></div>
+        <ul class="evidence-list" id="evidenceChecklist"></ul>
+        <div class="note-box" style="margin-top:14px"><h4 id="evidenceAlertTitle">Evidence helps clarify the case</h4><p id="evidenceAlert">Collect relevant proof before contacting the company.</p></div>
+      </div>
+
+      <div class="card">
+        <div class="card-heading"><div><h3>Suggested next step</h3><p>Rule-based guidance, not a legal or financial determination.</p></div></div>
+        <div class="note-box"><h4 id="recoveryActionTitle">Review the case</h4><p id="recoveryActionReason"></p><p class="next-step" id="recoveryActionNext"></p></div>
+      </div>
+
+      <div class="card">
+        <div class="card-heading"><div><h3>Recovery message draft</h3><p>Check every detail before sending it yourself.</p></div></div>
+        <div class="message-box" id="recoveryMessage"></div>
+        <div class="button-row">
+          <button type="button" class="button button-primary" id="copyMessageButton">Copy message</button>
+          <button type="button" class="button button-quiet" id="markPreparedButton">Mark as prepared</button>
+          <button type="button" class="button button-quiet" id="refreshMessageButton">Regenerate draft</button>
         </div>
-
-        <div
-          class="action-next"
-          id="recoveryActionNext"
-        >
-          -
-        </div>
-
+        <p class="hint" style="margin-top:11px">This app only prepares text. It does not send messages, file complaints, or guarantee a refund.</p>
       </div>
 
-    </div>
-
-    <!-- RECOVERY MESSAGE -->
-
-    <div class="card">
-
-      <h3>Recovery Message</h3>
-
-      <div
-        class="message-box"
-        id="recoveryMessage"
-      ></div>
-
-      <div class="message-actions">
-
-        <button
-          type="button"
-          class="secondary-button"
-          id="copyMessageButton"
-        >
-          Copy Message
-        </button>
-
-        <button
-          type="button"
-          class="success-button"
-          id="markPreparedButton"
-        >
-          Mark Recovery Prepared
-        </button>
-
+      <div class="card">
+        <div class="card-heading"><div><h3>Evidence file notes</h3><p>Only filenames and basic metadata are recorded here.</p></div></div>
+        <div class="uploaded-list" id="uploadedEvidence"></div>
       </div>
 
-      <div
-        class="help-text"
-        style="margin-top:12px;"
-      >
-        This MVP prepares the recovery message but does not
-        automatically send it to the merchant.
+      <div class="card">
+        <div class="card-heading"><div><h3>Activity history</h3><p>Track changes you make to this case.</p></div></div>
+        <div class="timeline" id="activityTimeline"></div>
       </div>
 
-    </div>
-
-    <!-- UPLOADED EVIDENCE -->
-
-    <div class="card">
-
-      <h3>Evidence Uploaded</h3>
-
-      <div
-        id="uploadedEvidence"
-      ></div>
-
-    </div>
-
-    <!-- ACTIVITY -->
-
-    <div class="card">
-
-      <h3>Case Activity</h3>
-
-      <div
-        class="timeline"
-        id="activityTimeline"
-      ></div>
-
-    </div>
-
-    <!-- CASE ACTIONS -->
-
-    <div class="card">
-
-      <div class="message-actions">
-
-        <button
-          type="button"
-          class="secondary-button"
-          id="backToDashboardButton"
-        >
-          Back to My Cases
-        </button>
-
-        <button
-          type="button"
-          class="secondary-button"
-          id="newCaseButton"
-        >
-          Start Another Case
-        </button>
-
-        <button
-          type="button"
-          class="danger-button"
-          id="deleteCurrentCaseButton"
-        >
-          Delete This Case
-        </button>
-
+      <div class="button-row" style="margin:0 0 22px">
+        <button type="button" class="button button-quiet" id="backToDashboardButton">← Back to my cases</button>
+        <button type="button" class="button button-primary" id="newCaseButton">+ Start another case</button>
+        <button type="button" class="button button-danger" id="deleteCurrentCaseButton">Delete case</button>
       </div>
+    </section>
+  </main>
 
-    </div>
+  <footer class="shell disclaimer">
+    <strong>Prototype notice:</strong> Consumer Recovery Agent provides general, rule-based organization and message drafting. It is not a lawyer, bank, payment provider, or merchant representative. It does not verify claims, determine legal rights, connect to merchant systems, or submit disputes. Cases are stored in this browser only; clearing browser data may remove them. Evidence files are not uploaded or securely stored.
+  </footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  </section>
+  <script>
+  "use strict";
+  const STORAGE_KEY = "consumerRecoveryAgentCasesV4";
+  const LEGACY_KEYS = ["consumerRecoveryAgentCasesV3"];
+  const STATUSES = ["New","Evidence Required","Ready for Recovery","Recovery Prepared","Waiting for Merchant","Follow-up Required","Resolved"];
+  let cases = loadCases();
+  let currentCaseId = null;
+  let toastTimer = null;
 
-</main>
-
-<footer>
-
-  <div class="container">
-
-    <div class="disclaimer">
-
-      Consumer Recovery Agent is currently an MVP prototype.
-      Case classification and recommendations are rule-based.
-      This prototype does not yet connect to real merchant systems,
-      payment providers, legal services, or external recovery APIs.
-      Evidence files are currently tracked locally in this browser
-      by file name only and are not uploaded to an external service.
-
-    </div>
-
-  </div>
-
-</footer>
-
-<div
-  class="toast"
-  id="toast"
-></div>
-
-<script>
-
-/* =========================================================
-   STORAGE
-========================================================= */
-
-const STORAGE_KEY =
-  "consumerRecoveryAgentCasesV3";
-
-let cases =
-  loadCases();
-
-let currentCaseId =
-  null;
-
-
-/* =========================================================
-   BASIC HELPERS
-========================================================= */
-
-function loadCases() {
-
-  try {
-
-    const saved =
-      localStorage.getItem(
-        STORAGE_KEY
-      );
-
-    if (!saved) {
+  const $ = id => document.getElementById(id);
+  function escapeHtml(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    })[char]);
+  }
+  function formatCurrency(value) {
+    const amount = Number(value);
+    return "₹" + (Number.isFinite(amount) ? amount : 0).toLocaleString("en-IN",{minimumFractionDigits:0,maximumFractionDigits:2});
+  }
+  function formatDate(value) {
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? "Unknown time" : date.toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short"});
+  }
+  function createId() {
+    let id;
+    do { id = "CRA-" + Math.floor(100000 + Math.random()*900000); }
+    while (cases.some(item => item.id === id));
+    return id;
+  }
+  function toast(message) {
+    const node = $("toast");
+    node.textContent = message;
+    node.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => node.classList.remove("show"), 2600);
+  }
+  function saveCases() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cases));
+      return true;
+    } catch (error) {
+      console.error("Could not save cases", error);
+      toast("Browser storage is full or unavailable. Changes may not persist.");
+      return false;
+    }
+  }
+  function normalizeCase(item) {
+    if (!item || typeof item !== "object") return null;
+    item.id = String(item.id || ("CRA-" + Math.floor(100000 + Math.random()*900000)));
+    item.merchant = String(item.merchant || "Unknown company");
+    item.amount = Number(item.amount) || 0;
+    item.problem = String(item.problem || "");
+    item.goal = String(item.goal || "");
+    item.caseType = String(item.caseType || "Other / Needs Review");
+    item.priority = ["High","Medium","Standard"].includes(item.priority) ? item.priority : "Standard";
+    item.status = STATUSES.includes(item.status) ? item.status : "New";
+    item.evidence = Array.isArray(item.evidence) ? item.evidence.map(e => ({
+      name:String(e?.name || "Evidence item"), completed:Boolean(e?.completed), fileName:e?.fileName ? String(e.fileName) : null
+    })) : [];
+    item.uploadedFiles = Array.isArray(item.uploadedFiles) ? item.uploadedFiles.map(String) : [];
+    item.evidenceFiles = Array.isArray(item.evidenceFiles) ? item.evidenceFiles : [];
+    item.activity = Array.isArray(item.activity) ? item.activity : [];
+    item.createdAt = item.createdAt || new Date().toISOString();
+    item.updatedAt = item.updatedAt || item.createdAt;
+    const classification = classifyCase(item.problem,item.goal);
+    item.actionTitle = item.actionTitle || classification.actionTitle;
+    item.actionReason = item.actionReason || classification.actionReason;
+    item.actionNext = item.actionNext || classification.actionNext;
+    item.recoveryMessage = item.recoveryMessage || generateRecoveryMessage(item);
+    return item;
+  }
+  function loadCases() {
+    try {
+      let raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        for (const key of LEGACY_KEYS) {
+          const legacy = localStorage.getItem(key);
+          if (legacy) { raw = legacy; break; }
+        }
+      }
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed.map(normalizeCase).filter(Boolean) : [];
+    } catch (error) {
+      console.error("Could not load saved cases", error);
       return [];
     }
-
-    const parsed =
-      JSON.parse(saved);
-
-    if (!Array.isArray(parsed)) {
-      return [];
+  }
+  function containsAny(text, words) { return words.some(word => text.includes(word)); }
+  function classifyCase(problem, goal) {
+    const text = `${problem} ${goal}`.toLowerCase();
+    let result = {
+      caseType:"Other / Needs Review", priority:"Standard",
+      checklist:["Payment or transaction proof, if applicable","Order, booking, or service details","Proof of the problem","Previous communication with the company"],
+      actionTitle:"Review the case details",
+      actionReason:"The information does not clearly match one specific issue category. Review the facts and keep the request specific.",
+      actionNext:"Gather relevant documents, confirm the timeline, and ask the company for a written explanation or resolution."
+    };
+    if (containsAny(text,["refund","refunded","money back","refund not received","cashback not received","return money"])) {
+      result = {caseType:"Refund Recovery",priority:"High",
+        checklist:["Payment or transaction proof","Order or purchase confirmation","Return or refund confirmation, if available","Previous communication with the company"],
+        actionTitle:"Check the refund timeline",
+        actionReason:"The description suggests a refund is expected or has not yet appeared. The company’s stated refund timeline and payment method may matter.",
+        actionNext:"Compare the refund confirmation with your payment statement, then request a written status and expected completion date."};
+    } else if (containsAny(text,["subscription","membership","recurring","auto renewal","auto-renewal","renewal charge"])) {
+      result = {caseType:"Subscription Issue",priority:"High",
+        checklist:["Subscription payment proof","Subscription or membership details","Cancellation request or confirmation, if applicable","Previous communication with the company"],
+        actionTitle:"Check subscription and billing details",
+        actionReason:"The description may involve recurring billing or a cancellation issue. Check the terms and the dates before making a claim.",
+        actionNext:"Save the subscription details and cancellation confirmation, then ask the company to explain any disputed charge."};
+    } else if (containsAny(text,["cancel","cancellation","cancelled","canceled"])) {
+      result = {caseType:"Cancellation Dispute",priority:"High",
+        checklist:["Original order or booking confirmation","Cancellation request proof","Cancellation confirmation, if available","Payment or refund proof"],
+        actionTitle:"Confirm the cancellation record",
+        actionReason:"The issue appears to involve a cancellation and an expected follow-up or refund.",
+        actionNext:"Keep the cancellation date and confirmation, then request a clear written update on the remaining step."};
+    } else if (containsAny(text,["wrong product","damaged","defective","broken","different product","product issue","product dispute","not as described"])) {
+      result = {caseType:"Product Dispute",priority:"Medium",
+        checklist:["Order or purchase confirmation","Clear photos of the product issue","Delivery proof, if available","Previous communication with the company"],
+        actionTitle:"Document the product issue",
+        actionReason:"The description suggests a product quality, damage, or mismatch concern. Clear and dated evidence can help explain the problem.",
+        actionNext:"Keep photos and order details, then state whether you are requesting a replacement, repair, or refund."};
+    } else if (containsAny(text,["charged","payment","paid","debit","service not provided","service failed","money deducted","unauthorized","unknown transaction","double charge","duplicate charge"])) {
+      result = {caseType:"Payment / Service Dispute",priority:"High",
+        checklist:["Payment or transaction proof","Order or service details","Proof of the service or payment issue","Previous communication with the company"],
+        actionTitle:"Verify the transaction and service",
+        actionReason:"The description suggests a payment or service issue. If a charge is unauthorized, contact your bank or payment provider promptly through official channels.",
+        actionNext:"Compare the transaction details with your order or service record, and request a written explanation or resolution from the appropriate provider."};
     }
-
-    return parsed.map(
-      normalizeCase
-    );
-
-  } catch (error) {
-
-    console.error(
-      "Could not load saved cases:",
-      error
-    );
-
-    return [];
+    return result;
   }
-}
-
-
-function normalizeCase(caseData) {
-
-  if (!Array.isArray(caseData.evidence)) {
-    caseData.evidence = [];
+  function generateRecoveryMessage(item) {
+    return `Subject: ${item.caseType} — Request for Resolution — ${formatCurrency(item.amount)}\n\nHello ${item.merchant} Support Team,\n\nI am contacting you to request assistance with the following issue:\n\n${item.problem}\n\nMy requested resolution is:\n${item.goal}\n\nPlease review the details and let me know the next steps and the expected timeline for a response. If you need any additional information, please tell me what is required.\n\nThank you,\n[Your name]\n\nCase reference: ${item.id}`;
   }
-
-  caseData.evidence =
-    caseData.evidence.map(
-      item => ({
-        name:
-          item.name || "Evidence item",
-        completed:
-          Boolean(item.completed),
-        fileName:
-          item.fileName || null
-      })
-    );
-
-  if (!Array.isArray(caseData.uploadedFiles)) {
-    caseData.uploadedFiles = [];
+  function addActivity(item,title,description) {
+    item.activity.push({title,description,time:new Date().toISOString()});
+    item.updatedAt = new Date().toISOString();
   }
-
-  if (!Array.isArray(caseData.evidenceFiles)) {
-    caseData.evidenceFiles = [];
+  function createCase(merchant,amount,problem,goal,files) {
+    const classification = classifyCase(problem,goal);
+    const now = new Date().toISOString();
+    const item = {
+      id:createId(),merchant,amount:Number(amount),problem,goal,
+      caseType:classification.caseType,priority:classification.priority,
+      status:"Evidence Required",
+      evidence:classification.checklist.map(name=>({name,completed:false,fileName:null})),
+      uploadedFiles:[],evidenceFiles:[],
+      actionTitle:classification.actionTitle,actionReason:classification.actionReason,actionNext:classification.actionNext,
+      activity:[],createdAt:now,updatedAt:now
+    };
+    item.recoveryMessage = generateRecoveryMessage(item);
+    addActivity(item,"Case created",`${item.caseType} case created for ${merchant}.`);
+    addActivity(item,"Case analyzed",`Rule-based suggested priority: ${item.priority}.`);
+    addActivity(item,"Evidence checklist created",`${item.evidence.length} checklist items added.`);
+    if (files.length) {
+      item.uploadedFiles = files.map(file=>file.name);
+      files.forEach((file,index)=>{
+        if (item.evidence[index]) {
+          item.evidence[index].completed = true;
+          item.evidence[index].fileName = file.name;
+          item.evidenceFiles.push({evidenceName:item.evidence[index].name,fileName:file.name,fileType:file.type || "Unknown",fileSize:file.size,uploadedAt:now});
+        }
+      });
+      addActivity(item,"Files selected",`${files.length} file name(s) recorded locally; file contents were not uploaded.`);
+    }
+    cases.unshift(item);
+    saveCases();
+    return item;
   }
-
-  if (!Array.isArray(caseData.activity)) {
-    caseData.activity = [];
+  function currentCase() { return cases.find(item=>item.id===currentCaseId) || null; }
+  function priorityClass(priority) {
+    return priority==="High" ? "pill-high" : priority==="Medium" ? "pill-medium" : "pill-standard";
   }
-
-  return caseData;
-}
-
-
-function saveCases() {
-
-  try {
-
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(cases)
-    );
-
-  } catch (error) {
-
-    console.error(
-      "Could not save cases:",
-      error
-    );
-
-    showToast(
-      "Could not save changes in this browser."
-    );
+  function statusClass(status) {
+    return status==="Resolved" ? "pill" : "pill pill-status";
   }
-}
-
-
-function createCaseId() {
-
-  const random =
-    Math.floor(
-      100000 +
-      Math.random() * 900000
-    );
-
-  return `CRA-${random}`;
-}
-
-
-function formatCurrency(value) {
-
-  const number =
-    Number(value) || 0;
-
-  return "₹" +
-    number.toLocaleString(
-      "en-IN",
-      {
-        maximumFractionDigits: 2
-      }
-    );
-}
-
-
-function containsAny(
-  text,
-  words
-) {
-
-  return words.some(
-    word =>
-      text.includes(word)
-  );
-}
-
-
-function getPriorityClass(
-  priority
-) {
-
-  if (priority === "High") {
-    return "priority-high";
+  function renderStats() {
+    $("statTotal").textContent = cases.length;
+    $("statOpen").textContent = cases.filter(item=>item.status!=="Resolved").length;
+    $("statResolved").textContent = cases.filter(item=>item.status==="Resolved").length;
   }
-
-  if (priority === "Medium") {
-    return "priority-medium";
-  }
-
-  return "priority-standard";
-}
-
-
-function showToast(
-  message
-) {
-
-  const toast =
-    document.getElementById(
-      "toast"
-    );
-
-  toast.textContent =
-    message;
-
-  toast.classList.add(
-    "show"
-  );
-
-  setTimeout(
-    () => {
-      toast.classList.remove(
-        "show"
-      );
-    },
-    2200
-  );
-}
-
-
-function escapeHtml(
-  value
-) {
-
-  return String(value)
-    .replaceAll(
-      "&",
-      "&amp;"
-    )
-    .replaceAll(
-      "<",
-      "&lt;"
-    )
-    .replaceAll(
-      ">",
-      "&gt;"
-    )
-    .replaceAll(
-      '"',
-      "&quot;"
-    )
-    .replaceAll(
-      "'",
-      "&#039;"
-    );
-}
-
-
-function formatDate(
-  value
-) {
-
-  const date =
-    new Date(value);
-
-  if (
-    Number.isNaN(
-      date.getTime()
-    )
-  ) {
-    return "Unknown time";
-  }
-
-  return date.toLocaleString(
-    "en-IN"
-  );
-}
-
-
-/* =========================================================
-   CASE CLASSIFICATION
-========================================================= */
-
-function classifyCase(
-  problem,
-  goal
-) {
-
-  const text =
-    `${problem} ${goal}`
-      .toLowerCase()
-      .trim();
-
-  let caseType =
-    "Other / Needs Review";
-
-  let priority =
-    "Standard";
-
-  let checklist = [];
-
-  let actionTitle =
-    "Review the case details";
-
-  let actionReason =
-    "The case needs additional review before a specific recovery path can be prepared.";
-
-  let actionNext =
-    "Review the available evidence and identify the strongest next step.";
-
-  /* REFUND */
-
-  if (
-    containsAny(
-      text,
-      [
-        "refund",
-        "refunded",
-        "refund not received",
-        "money back",
-        "return money",
-        "cashback not received"
-      ]
-    )
-  ) {
-
-    caseType =
-      "Refund Recovery";
-
-    priority =
-      "High";
-
-    checklist = [
-      "Payment / transaction proof",
-      "Order or purchase proof",
-      "Return or refund confirmation if available",
-      "Previous communication with the merchant"
-    ];
-
-    actionTitle =
-      "Verify the refund status";
-
-    actionReason =
-      "Your case indicates that money is expected back but the refund has not been confirmed.";
-
-    actionNext =
-      "Review the return/refund proof and prepare a merchant resolution request.";
-
-  }
-
-  /* SUBSCRIPTION */
-
-  else if (
-    containsAny(
-      text,
-      [
-        "subscription",
-        "membership",
-        "recurring",
-        "auto renewal",
-        "auto-renewal"
-      ]
-    )
-  ) {
-
-    caseType =
-      "Subscription Issue";
-
-    priority =
-      "High";
-
-    checklist = [
-      "Subscription payment proof",
-      "Subscription or membership details",
-      "Cancellation request or confirmation",
-      "Previous communication with the merchant"
-    ];
-
-    actionTitle =
-      "Verify cancellation and recurring billing status";
-
-    actionReason =
-      "The case may involve an unwanted or unresolved recurring subscription charge.";
-
-    actionNext =
-      "Collect the subscription and cancellation evidence before requesting resolution.";
-
-  }
-
-  /* CANCELLATION */
-
-  else if (
-    containsAny(
-      text,
-      [
-        "cancel",
-        "cancellation",
-        "cancelled",
-        "canceled"
-      ]
-    )
-  ) {
-
-    caseType =
-      "Cancellation Dispute";
-
-    priority =
-      "High";
-
-    checklist = [
-      "Original order / booking proof",
-      "Cancellation request proof",
-      "Cancellation confirmation if available",
-      "Payment or refund proof"
-    ];
-
-    actionTitle =
-      "Verify the cancellation request";
-
-    actionReason =
-      "The case indicates that a cancellation was requested but the expected resolution may not have occurred.";
-
-    actionNext =
-      "Review cancellation proof and prepare a clear resolution request.";
-
-  }
-
-  /* PRODUCT */
-
-  else if (
-    containsAny(
-      text,
-      [
-        "wrong product",
-        "damaged",
-        "defective",
-        "broken",
-        "different product",
-        "product issue",
-        "product dispute"
-      ]
-    )
-  ) {
-
-    caseType =
-      "Product Dispute";
-
-    priority =
-      "Medium";
-
-    checklist = [
-      "Order / purchase proof",
-      "Photos or videos of the product issue",
-      "Delivery proof if available",
-      "Previous communication with the merchant"
-    ];
-
-    actionTitle =
-      "Document the product issue";
-
-    actionReason =
-      "The case involves a product-related problem that should be supported with clear evidence.";
-
-    actionNext =
-      "Collect purchase proof and clear evidence of the product issue.";
-
-  }
-
-  /* PAYMENT / SERVICE */
-
-  else if (
-    containsAny(
-      text,
-      [
-        "charged",
-        "payment",
-        "paid",
-        "debit",
-        "service not provided",
-        "service failed",
-        "payment dispute",
-        "money deducted"
-      ]
-    )
-  ) {
-
-    caseType =
-      "Payment / Service Dispute";
-
-    priority =
-      "High";
-
-    checklist = [
-      "Payment / transaction proof",
-      "Order or service details",
-      "Proof of the issue",
-      "Previous communication with the merchant"
-    ];
-
-    actionTitle =
-      "Verify the payment and service status";
-
-    actionReason =
-      "The case indicates a payment or service problem that needs transaction and service evidence.";
-
-    actionNext =
-      "Review the transaction and prepare the appropriate merchant resolution request.";
-
-  }
-
-  /* OTHER */
-
-  else {
-
-    checklist = [
-      "Payment / transaction proof if applicable",
-      "Order, booking, or service proof",
-      "Proof of the problem",
-      "Previous communication with the merchant"
-    ];
-
-    actionTitle =
-      "Review the case evidence";
-
-    actionReason =
-      "The current information does not match a specific recovery category with enough confidence.";
-
-    actionNext =
-      "Collect the available evidence and clarify the desired resolution.";
-
-  }
-
-  return {
-    caseType,
-    priority,
-    checklist,
-    actionTitle,
-    actionReason,
-    actionNext
-  };
-}
-
-
-/* =========================================================
-   RECOVERY MESSAGE
-========================================================= */
-
-function generateRecoveryMessage(
-  merchant,
-  amount,
-  problem,
-  goal,
-  caseType
-) {
-
-  const formattedAmount =
-    formatCurrency(amount);
-
-  return (
-`Subject: ${caseType} — Request for Resolution — ${formattedAmount}
-
-Hello ${merchant} Support Team,
-
-I am contacting you regarding the following issue:
-
-${problem}
-
-I am requesting the following resolution:
-
-${goal}
-
-Please review this matter and confirm the resolution and expected timeline.
-
-Thank you,
-
-Consumer Recovery Agent
-MVP Prototype`
-  );
-}
-
-
-/* =========================================================
-   STATUS HELPERS
-========================================================= */
-
-function statusDescription(
-  status
-) {
-
-  const descriptions = {
-
-    "New":
-      "The recovery case has been created and is ready for review.",
-
-    "Evidence Required":
-      "Additional evidence may be needed before the next recovery action.",
-
-    "Ready for Recovery":
-      "The available case information is ready for the next recovery step.",
-
-    "Recovery Prepared":
-      "A recovery message/action has been prepared for the case.",
-
-    "Waiting for Merchant":
-      "The case is waiting for a merchant response. This prototype does not send messages automatically.",
-
-    "Follow-up Required":
-      "A follow-up may be needed based on the merchant response or lack of response.",
-
-    "Resolved":
-      "The user has marked the case as resolved."
-  };
-
-  return (
-    descriptions[status] ||
-    "Case status updated."
-  );
-}
-
-
-/* =========================================================
-   CASE CREATION
-========================================================= */
-
-function createCase(
-  merchant,
-  amount,
-  problem,
-  goal,
-  uploadedFiles
-) {
-
-  const classification =
-    classifyCase(
-      problem,
-      goal
-    );
-
-  const evidence =
-    classification.checklist.map(
-      item => ({
-        name: item,
-        completed: false,
-        fileName: null
-      })
-    );
-
-  const caseId =
-    createCaseId();
-
-  const now =
-    new Date().toISOString();
-
-  const newCase = {
-
-    id:
-      caseId,
-
-    merchant:
-      merchant,
-
-    amount:
-      Number(amount),
-
-    problem:
-      problem,
-
-    goal:
-      goal,
-
-    caseType:
-      classification.caseType,
-
-    priority:
-      classification.priority,
-
-    status:
-      "Evidence Required",
-
-    evidence:
-      evidence,
-
-    uploadedFiles:
-      uploadedFiles,
-
-    evidenceFiles:
-      [],
-
-    actionTitle:
-      classification.actionTitle,
-
-    actionReason:
-      classification.actionReason,
-
-    actionNext:
-      classification.actionNext,
-
-    recoveryMessage:
-      generateRecoveryMessage(
-        merchant,
-        amount,
-        problem,
-        goal,
-        classification.caseType
-      ),
-
-    activity: [
-
-      {
-        title:
-          "Case created",
-
-        description:
-          `${classification.caseType} case created for ${merchant}.`,
-
-        time:
-          now
-      },
-
-      {
-        title:
-          "Case analyzed",
-
-        description:
-          `Priority identified as ${classification.priority}.`,
-
-        time:
-          now
-      },
-
-      {
-        title:
-          "Evidence checklist generated",
-
-        description:
-          `${evidence.length} evidence items identified.`,
-
-        time:
-          now
-      }
-
-    ],
-
-    createdAt:
-      now,
-
-    updatedAt:
-      now
-  };
-
-  if (
-    uploadedFiles.length > 0
-  ) {
-
-    newCase.activity.push({
-
-      title:
-        "Evidence files added",
-
-      description:
-        `${uploadedFiles.length} file(s) were selected during case creation.`,
-
-      time:
-        now
-
+  function renderDashboard() {
+    renderStats();
+    const list = $("savedCaseList");
+    const query = $("caseSearch").value.trim().toLowerCase();
+    const filter = $("statusFilter").value;
+    const filtered = cases.filter(item=>{
+      const matchesQuery = !query || [item.merchant,item.id,item.caseType,item.problem,item.goal].some(value=>String(value).toLowerCase().includes(query));
+      return matchesQuery && (filter==="all" || item.status===filter);
     });
-
-  }
-
-  cases.unshift(
-    newCase
-  );
-
-  saveCases();
-
-  return newCase;
-}
-
-
-/* =========================================================
-   FIND CURRENT CASE
-========================================================= */
-
-function getCurrentCase() {
-
-  return cases.find(
-    item =>
-      item.id === currentCaseId
-  );
-}
-
-
-/* =========================================================
-   DASHBOARD
-========================================================= */
-
-function renderDashboard() {
-
-  const list =
-    document.getElementById(
-      "savedCaseList"
-    );
-
-  const count =
-    document.getElementById(
-      "caseCount"
-    );
-
-  count.textContent =
-    `${cases.length} ${
-      cases.length === 1
-        ? "case"
-        : "cases"
-    }`;
-
-  if (
-    cases.length === 0
-  ) {
-
-    list.innerHTML = `
-      <div class="empty-state">
-        No recovery cases yet.
-        Start your first case above.
-      </div>
-    `;
-
-    return;
-  }
-
-  list.innerHTML =
-    cases.map(
-      item => {
-
-        const priorityClass =
-          getPriorityClass(
-            item.priority
-          );
-
-        const completed =
-          item.evidence.filter(
-            evidence =>
-              evidence.completed
-          ).length;
-
-        const total =
-          item.evidence.length;
-
-        return `
-          <div class="saved-case">
-
-            <div class="saved-case-main">
-
-              <div class="saved-case-title">
-                ${escapeHtml(item.merchant)}
-                · ${escapeHtml(item.caseType)}
-              </div>
-
-              <div class="saved-case-meta">
-                ${escapeHtml(item.id)}
-                · ${formatCurrency(item.amount)}
-                · ${escapeHtml(item.status)}
-                · Evidence ${completed}/${total}
-              </div>
-
-              <div style="margin-top:7px;">
-                <span class="priority-badge ${priorityClass}">
-                  ${escapeHtml(item.priority)}
-                </span>
-              </div>
-
-            </div>
-
-            <div class="saved-case-actions">
-
-              <button
-                type="button"
-                class="secondary-button"
-                onclick="openCase('${item.id}')"
-              >
-                Open
-              </button>
-
-              <button
-                type="button"
-                class="danger-button"
-                onclick="deleteCaseById('${item.id}')"
-              >
-                Delete
-              </button>
-
-            </div>
-
-          </div>
-        `;
-      }
-    ).join("");
-}
-
-
-/* =========================================================
-   OPEN CASE
-========================================================= */
-
-function openCase(
-  caseId
-) {
-
-  const selected =
-    cases.find(
-      item =>
-        item.id === caseId
-    );
-
-  if (!selected) {
-    return;
-  }
-
-  currentCaseId =
-    selected.id;
-
-  renderCase(
-    selected
-  );
-
-  document
-    .getElementById(
-      "newCaseSection"
-    )
-    .classList.add(
-      "hidden"
-    );
-
-  document
-    .getElementById(
-      "dashboardSection"
-    )
-    .classList.add(
-      "hidden"
-    );
-
-  document
-    .getElementById(
-      "resultSection"
-    )
-    .style.display =
-    "block";
-
-  document
-    .getElementById(
-      "resultSection"
-    )
-    .scrollIntoView({
-      behavior:
-        "smooth",
-      block:
-        "start"
-    });
-}
-
-
-/* =========================================================
-   RENDER CASE
-========================================================= */
-
-function renderCase(
-  caseData
-) {
-
-  document.getElementById(
-    "resultMerchant"
-  ).textContent =
-    caseData.merchant;
-
-  document.getElementById(
-    "resultCaseId"
-  ).textContent =
-    caseData.id;
-
-  document.getElementById(
-    "resultAmount"
-  ).textContent =
-    formatCurrency(
-      caseData.amount
-    );
-
-  document.getElementById(
-    "resultCaseType"
-  ).textContent =
-    caseData.caseType;
-
-  document.getElementById(
-    "resultPriority"
-  ).textContent =
-    caseData.priority;
-
-  document.getElementById(
-    "resultGoal"
-  ).textContent =
-    caseData.goal;
-
-  document.getElementById(
-    "caseTypeBadge"
-  ).textContent =
-    caseData.caseType;
-
-  const priorityBadge =
-    document.getElementById(
-      "priorityBadge"
-    );
-
-  priorityBadge.textContent =
-    caseData.priority;
-
-  priorityBadge.className =
-    `priority-badge ${
-      getPriorityClass(
-        caseData.priority
-      )
-    }`;
-
-  const statusBadge =
-    document.getElementById(
-      "caseStatusBadge"
-    );
-
-  statusBadge.textContent =
-    caseData.status.toUpperCase();
-
-  const statusSelect =
-    document.getElementById(
-      "caseStatusSelect"
-    );
-
-  statusSelect.value =
-    caseData.status;
-
-  document.getElementById(
-    "caseSummary"
-  ).textContent =
-    `You reported a recovery issue with ${caseData.merchant} involving ${formatCurrency(caseData.amount)}. Your requested recovery is: ${caseData.goal}`;
-
-  renderEvidence(
-    caseData
-  );
-
-  document.getElementById(
-    "recoveryActionTitle"
-  ).textContent =
-    caseData.actionTitle;
-
-  document.getElementById(
-    "recoveryActionReason"
-  ).textContent =
-    caseData.actionReason;
-
-  document.getElementById(
-    "recoveryActionNext"
-  ).textContent =
-    `Next step: ${caseData.actionNext}`;
-
-  document.getElementById(
-    "recoveryMessage"
-  ).textContent =
-    caseData.recoveryMessage;
-
-  renderUploadedEvidence(
-    caseData
-  );
-
-  renderTimeline(
-    caseData
-  );
-}
-
-
-/* =========================================================
-   EVIDENCE RENDERING
-========================================================= */
-
-function renderEvidence(
-  caseData
-) {
-
-  const checklist =
-    document.getElementById(
-      "evidenceChecklist"
-    );
-
-  const total =
-    caseData.evidence.length;
-
-  const completed =
-    caseData.evidence.filter(
-      item =>
-        item.completed
-    ).length;
-
-  const percentage =
-    total === 0
-      ? 0
-      : Math.round(
-          (completed / total) * 100
-        );
-
-  document.getElementById(
-    "evidenceProgressText"
-  ).textContent =
-    `${completed} of ${total} complete (${percentage}%)`;
-
-  document.getElementById(
-    "evidenceProgressFill"
-  ).style.width =
-    `${percentage}%`;
-
-  if (
-    total === 0
-  ) {
-
-    checklist.innerHTML = `
-      <li class="evidence-empty">
-        No evidence checklist items were generated.
-      </li>
-    `;
-
-  } else {
-
-    checklist.innerHTML =
-      caseData.evidence
-        .map(
-          (item, index) => {
-
-            const fileName =
-              item.fileName;
-
-            return `
-              <li
-                class="evidence-item ${
-                  item.completed
-                    ? "completed"
-                    : ""
-                }"
-              >
-
-                <div class="evidence-icon">
-                  ${
-                    item.completed
-                      ? "✓"
-                      : "📎"
-                  }
-                </div>
-
-                <div class="evidence-text">
-
-                  <div class="evidence-name">
-                    ${escapeHtml(item.name)}
-                  </div>
-
-                  ${
-                    fileName
-                      ? `
-                        <div class="evidence-file">
-                          File: ${escapeHtml(fileName)}
-                        </div>
-                      `
-                      : `
-                        <div class="evidence-file">
-                          No file attached yet
-                        </div>
-                      `
-                  }
-
-                </div>
-
-                <span class="evidence-status">
-                  ${
-                    item.completed
-                      ? "Complete"
-                      : "Needed"
-                  }
-                </span>
-
-                <button
-                  type="button"
-                  class="evidence-upload-button"
-                  onclick="triggerEvidenceUpload(${index})"
-                >
-                  ${
-                    item.completed
-                      ? "Replace"
-                      : "Upload"
-                  }
-                </button>
-
-                <input
-                  type="file"
-                  id="evidence-file-${index}"
-                  accept=".pdf,.png,.jpg,.jpeg,.webp,.txt"
-                  style="display:none;"
-                  onchange="handleEvidenceUpload(event, ${index})"
-                >
-
-              </li>
-            `;
-
-          }
-        )
-        .join("");
-  }
-
-  const alert =
-    document.getElementById(
-      "evidenceAlert"
-    );
-
-  const missing =
-    total - completed;
-
-  if (
-    total === 0
-  ) {
-
-    alert.innerHTML =
-      "<strong>No evidence checklist available.</strong>";
-
-  } else if (
-    missing > 0
-  ) {
-
-    alert.innerHTML =
-      `<strong>${missing}</strong> evidence item${
-        missing === 1
-          ? ""
-          : "s"
-      } still ${
-        missing === 1
-          ? "needs"
-          : "need"
-      } attention. Upload the relevant proof for each item.`;
-
-  } else {
-
-    alert.innerHTML =
-      "<strong>Evidence ready.</strong> All checklist items are marked complete.";
-
-  }
-}
-
-
-/* =========================================================
-   TRIGGER EVIDENCE UPLOAD
-========================================================= */
-
-function triggerEvidenceUpload(
-  index
-) {
-
-  const currentCase =
-    getCurrentCase();
-
-  if (!currentCase) {
-    return;
-  }
-
-  const input =
-    document.getElementById(
-      `evidence-file-${index}`
-    );
-
-  if (input) {
-    input.click();
-  }
-}
-
-
-/* =========================================================
-   HANDLE EVIDENCE UPLOAD
-========================================================= */
-
-function handleEvidenceUpload(
-  event,
-  index
-) {
-
-  const currentCase =
-    getCurrentCase();
-
-  if (!currentCase) {
-    return;
-  }
-
-  const file =
-    event.target.files &&
-    event.target.files[0];
-
-  if (!file) {
-    return;
-  }
-
-  if (
-    !currentCase.evidence[index]
-  ) {
-    return;
-  }
-
-  const now =
-    new Date().toISOString();
-
-  const evidenceItem =
-    currentCase.evidence[index];
-
-  evidenceItem.completed =
-    true;
-
-  evidenceItem.fileName =
-    file.name;
-
-  if (
-    !Array.isArray(
-      currentCase.evidenceFiles
-    )
-  ) {
-    currentCase.evidenceFiles = [];
-  }
-
-  const existingIndex =
-    currentCase.evidenceFiles.findIndex(
-      item =>
-        item.evidenceName ===
-        evidenceItem.name
-    );
-
-  const evidenceRecord = {
-    evidenceName:
-      evidenceItem.name,
-    fileName:
-      file.name,
-    fileType:
-      file.type || "Unknown",
-    fileSize:
-      file.size,
-    uploadedAt:
-      now
-  };
-
-  if (
-    existingIndex >= 0
-  ) {
-
-    currentCase.evidenceFiles[
-      existingIndex
-    ] =
-      evidenceRecord;
-
-  } else {
-
-    currentCase.evidenceFiles.push(
-      evidenceRecord
-    );
-  }
-
-  if (
-    !Array.isArray(
-      currentCase.uploadedFiles
-    )
-  ) {
-    currentCase.uploadedFiles = [];
-  }
-
-  if (
-    !currentCase.uploadedFiles.includes(
-      file.name
-    )
-  ) {
-
-    currentCase.uploadedFiles.push(
-      file.name
-    );
-
-  }
-
-  currentCase.updatedAt =
-    now;
-
-  currentCase.activity.push({
-
-    title:
-      "Evidence uploaded",
-
-    description:
-      `${evidenceItem.name}: ${file.name}`,
-
-    time:
-      now
-
-  });
-
-  const completed =
-    currentCase.evidence.filter(
-      item =>
-        item.completed
-    ).length;
-
-  const total =
-    currentCase.evidence.length;
-
-  if (
-    completed === total &&
-    total > 0 &&
-    (
-      currentCase.status ===
-      "Evidence Required" ||
-      currentCase.status ===
-      "New"
-    )
-  ) {
-
-    currentCase.status =
-      "Ready for Recovery";
-
-    currentCase.activity.push({
-
-      title:
-        "Case ready for recovery",
-
-      description:
-        "All required evidence checklist items have been completed.",
-
-      time:
-        now
-
-    });
-
-    showToast(
-      "Evidence complete — case ready for recovery"
-    );
-
-  } else {
-
-    showToast(
-      "Evidence uploaded successfully"
-    );
-
-  }
-
-  saveCases();
-
-  renderCase(
-    currentCase
-  );
-
-  renderDashboard();
-}
-
-
-/* =========================================================
-   UPLOADED EVIDENCE
-========================================================= */
-
-function renderUploadedEvidence(
-  caseData
-) {
-
-  const element =
-    document.getElementById(
-      "uploadedEvidence"
-    );
-
-  const records =
-    Array.isArray(
-      caseData.evidenceFiles
-    )
-      ? caseData.evidenceFiles
-      : [];
-
-  if (
-    records.length === 0
-  ) {
-
-    if (
-      Array.isArray(
-        caseData.uploadedFiles
-      ) &&
-      caseData.uploadedFiles.length > 0
-    ) {
-
-      element.innerHTML =
-        caseData.uploadedFiles
-          .map(
-            file =>
-              `<div class="evidence-summary">
-                <strong>File:</strong>
-                ${escapeHtml(file)}
-              </div>`
-          )
-          .join("");
-
+    $("caseCount").textContent = `${filtered.length} of ${cases.length} ${cases.length===1?"case":"cases"}`;
+    if (!filtered.length) {
+      list.innerHTML = cases.length ? `<div class="empty-state"><div class="empty-icon">⌕</div><strong>No matching cases</strong>Try another search or status filter.</div>` :
+        `<div class="empty-state"><div class="empty-icon">✦</div><strong>Your workspace is ready</strong>Create your first case above. It will appear here so you can return to it later.</div>`;
       return;
     }
-
-    element.innerHTML = `
-      <div class="evidence-empty">
-        No evidence uploaded yet.
-      </div>
-    `;
-
-    return;
+    list.innerHTML = filtered.map(item=>{
+      const done = item.evidence.filter(e=>e.completed).length;
+      return `<article class="case-row">
+        <div class="case-main">
+          <div class="case-title">${escapeHtml(item.merchant)} <span class="muted">·</span> ${escapeHtml(item.caseType)}</div>
+          <div class="case-meta">${escapeHtml(item.id)} · ${formatCurrency(item.amount)} · Updated ${escapeHtml(formatDate(item.updatedAt))}</div>
+          <div class="case-tags"><span class="${statusClass(item.status)}">${escapeHtml(item.status)}</span><span class="pill ${priorityClass(item.priority)}">${escapeHtml(item.priority)} suggested priority</span><span class="pill pill-standard">Evidence ${done}/${item.evidence.length}</span></div>
+        </div>
+        <div class="case-actions"><button type="button" class="button button-quiet button-small" data-open="${escapeHtml(item.id)}">Open case</button><button type="button" class="button button-danger button-small" data-delete="${escapeHtml(item.id)}">Delete</button></div>
+      </article>`;
+    }).join("");
+  }
+  function renderTimeline(item) {
+    const node = $("activityTimeline");
+    if (!item.activity.length) { node.innerHTML = `<div class="muted">No activity recorded yet.</div>`; return; }
+    node.innerHTML = item.activity.slice().reverse().map(event=>`<div class="timeline-item"><span class="timeline-dot"></span><div class="timeline-title">${escapeHtml(event.title)}</div><div class="timeline-description">${escapeHtml(event.description)}</div><div class="timeline-time">${escapeHtml(formatDate(event.time))}</div></div>`).join("");
+  }
+  function renderEvidence(item) {
+    const done = item.evidence.filter(e=>e.completed).length;
+    const total = item.evidence.length;
+    const pct = total ? Math.round(done/total*100) : 0;
+    $("evidenceProgressText").textContent = `${done} of ${total} complete (${pct}%)`;
+    $("evidenceProgressFill").style.width = `${pct}%`;
+    $("evidenceAlertTitle").textContent = total && done===total ? "Checklist marked complete" : "Evidence helps clarify the case";
+    $("evidenceAlert").textContent = total && done===total ? "All checklist items are marked complete. This does not verify the authenticity or sufficiency of the documents." : `${total-done} checklist item${total-done===1?"":"s"} remain. Select a relevant file for an item, or leave it incomplete if you do not have that proof.`;
+    $("evidenceChecklist").innerHTML = item.evidence.map((e,index)=>`<li class="evidence-item ${e.completed?"completed":""}">
+      <div class="evidence-symbol">${e.completed?"✓":"↗"}</div>
+      <div class="evidence-copy"><div class="evidence-name">${escapeHtml(e.name)}</div><div class="evidence-file">${e.fileName?`Selected file: ${escapeHtml(e.fileName)}`:"No file selected for this item"}</div></div>
+      <span class="evidence-status">${e.completed?"Selected":"Needed"}</span>
+      <button type="button" class="button button-quiet button-small" data-evidence="${index}">${e.completed?"Replace file":"Select file"}</button>
+      <input type="file" data-evidence-input="${index}" accept=".pdf,.png,.jpg,.jpeg,.webp,.txt" hidden>
+    </li>`).join("");
+    $("evidenceChecklist").querySelectorAll("[data-evidence]").forEach(button=>{
+      button.addEventListener("click",()=>{ const input=$("evidenceChecklist").querySelector(`[data-evidence-input="${button.dataset.evidence}"]`); if(input) input.click(); });
+    });
+    $("evidenceChecklist").querySelectorAll("[data-evidence-input]").forEach(input=>{
+      input.addEventListener("change",()=>handleEvidenceSelection(input,Number(input.dataset.evidenceInput)));
+    });
+  }
+  function handleEvidenceSelection(input,index) {
+    const item = currentCase();
+    const file = input.files && input.files[0];
+    if (!item || !file || !item.evidence[index]) return;
+    const evidence = item.evidence[index];
+    const now = new Date().toISOString();
+    evidence.completed = true;
+    evidence.fileName = file.name;
+    const record = {evidenceName:evidence.name,fileName:file.name,fileType:file.type||"Unknown",fileSize:file.size,uploadedAt:now};
+    const oldIndex = item.evidenceFiles.findIndex(row=>row.evidenceName===evidence.name);
+    if (oldIndex>=0) item.evidenceFiles[oldIndex]=record; else item.evidenceFiles.push(record);
+    if (!item.uploadedFiles.includes(file.name)) item.uploadedFiles.push(file.name);
+    addActivity(item,"Evidence filename recorded",`${evidence.name}: ${file.name}. File contents were not uploaded.`);
+    if (item.evidence.length && item.evidence.every(row=>row.completed) && ["New","Evidence Required"].includes(item.status)) {
+      setStatus(item,"Ready for Recovery",false);
+      addActivity(item,"Checklist marked complete","All checklist items have a selected filename. This does not verify the evidence.");
+      toast("Checklist marked complete");
+    } else toast("File name recorded for this checklist item");
+    saveCases();
+    renderCase(item);
+    renderDashboard();
+  }
+  function renderUploadedEvidence(item) {
+    const records = Array.isArray(item.evidenceFiles) ? item.evidenceFiles : [];
+    const node = $("uploadedEvidence");
+    if (!records.length) {
+      node.innerHTML = `<div class="empty-state">No file details recorded for this case yet.</div>`;
+      return;
+    }
+    node.innerHTML = records.map(row=>`<div class="uploaded-record"><strong>${escapeHtml(row.evidenceName || "Evidence")} — ${escapeHtml(row.fileName || "Unnamed file")}</strong><span>${escapeHtml(row.fileType || "Unknown type")} · ${Number(row.fileSize)>0 ? (Number(row.fileSize)/1024).toFixed(1)+" KB · " : ""}Selected ${escapeHtml(formatDate(row.uploadedAt))}</span></div>`).join("");
+  }
+  function renderCase(item) {
+    $("resultMerchant").textContent = item.merchant;
+    $("resultCaseId").textContent = item.id;
+    $("resultAmount").textContent = formatCurrency(item.amount);
+    $("resultCaseType").textContent = item.caseType;
+    $("resultPriority").textContent = item.priority;
+    $("resultGoal").textContent = item.goal;
+    $("caseTypeBadge").textContent = item.caseType;
+    $("priorityBadge").textContent = `${item.priority} suggested`;
+    $("priorityBadge").className = `pill ${priorityClass(item.priority)}`;
+    $("caseStatusBadge").textContent = item.status;
+    $("caseStatusBadge").className = statusClass(item.status);
+    $("caseStatusSelect").value = item.status;
+    $("caseSummary").textContent = `You described an issue with ${item.merchant} involving ${formatCurrency(item.amount)}. Your requested outcome: ${item.goal}`;
+    $("recoveryActionTitle").textContent = item.actionTitle;
+    $("recoveryActionReason").textContent = item.actionReason;
+    $("recoveryActionNext").textContent = `Suggested next step: ${item.actionNext}`;
+    $("recoveryMessage").textContent = item.recoveryMessage;
+    renderEvidence(item);
+    renderUploadedEvidence(item);
+    renderTimeline(item);
+  }
+  function showCase(item) {
+    currentCaseId = item.id;
+    $("newCaseSection").classList.add("hidden");
+    $("dashboardSection").classList.add("hidden");
+    $("resultSection").style.display = "block";
+    renderCase(item);
+    $("resultSection").scrollIntoView({behavior:"smooth",block:"start"});
+  }
+  function showDashboard(scroll=true) {
+    currentCaseId = null;
+    $("resultSection").style.display = "none";
+    $("newCaseSection").classList.remove("hidden");
+    $("dashboardSection").classList.remove("hidden");
+    renderDashboard();
+    if(scroll) $("dashboardSection").scrollIntoView({behavior:"smooth",block:"start"});
+  }
+  function setStatus(item,newStatus,recordActivity=true) {
+    if (!STATUSES.includes(newStatus) || item.status===newStatus) return false;
+    const old = item.status;
+    item.status = newStatus;
+    item.updatedAt = new Date().toISOString();
+    if(recordActivity) addActivity(item,"Status updated",`${old} → ${newStatus}.`);
+    return true;
+  }
+  function deleteCase(id) {
+    const item = cases.find(row=>row.id===id);
+    if (!item) return;
+    if (!window.confirm(`Delete case ${item.id} for ${item.merchant}? This cannot be undone in this app.`)) return;
+    cases = cases.filter(row=>row.id!==id);
+    saveCases();
+    if (currentCaseId===id) showDashboard(false);
+    renderDashboard();
+    toast("Case deleted from this browser");
   }
 
-  element.innerHTML =
-    records
-      .map(
-        record =>
-          `
-            <div class="evidence-summary">
-
-              <strong>
-                ${escapeHtml(record.evidenceName)}
-              </strong>
-
-              <div style="margin-top:4px;">
-                ${escapeHtml(record.fileName)}
-              </div>
-
-              <div style="margin-top:4px;">
-                ${escapeHtml(
-                  record.fileType || "Unknown file type"
-                )}
-                ·
-                ${formatDate(record.uploadedAt)}
-              </div>
-
-            </div>
-          `
-      )
-      .join("");
-}
-
-
-/* =========================================================
-   TIMELINE
-========================================================= */
-
-function renderTimeline(
-  caseData
-) {
-
-  const timeline =
-    document.getElementById(
-      "activityTimeline"
-    );
-
-  if (
-    !Array.isArray(
-      caseData.activity
-    ) ||
-    caseData.activity.length === 0
-  ) {
-
-    timeline.innerHTML =
-      `<div class="empty-state">No activity yet.</div>`;
-
-    return;
-  }
-
-  timeline.innerHTML =
-    caseData.activity
-      .slice()
-      .reverse()
-      .map(
-        item => {
-
-          return `
-            <div class="timeline-item">
-
-              <span class="timeline-dot"></span>
-
-              <div class="timeline-title">
-                ${escapeHtml(item.title)}
-              </div>
-
-              <div class="timeline-description">
-                ${escapeHtml(item.description)}
-              </div>
-
-              <div class="timeline-time">
-                ${formatDate(item.time)}
-              </div>
-
-            </div>
-          `;
-
-        }
-      )
-      .join("");
-}
-
-
-/* =========================================================
-   STATUS UPDATE
-========================================================= */
-
-function updateCaseStatus(
-  newStatus
-) {
-
-  const currentCase =
-    getCurrentCase();
-
-  if (!currentCase) {
-    return;
-  }
-
-  if (
-    currentCase.status ===
-    newStatus
-  ) {
-    return;
-  }
-
-  const oldStatus =
-    currentCase.status;
-
-  currentCase.status =
-    newStatus;
-
-  currentCase.updatedAt =
-    new Date().toISOString();
-
-  currentCase.activity.push({
-
-    title:
-      "Case status updated",
-
-    description:
-      `${oldStatus} → ${newStatus}. ${statusDescription(newStatus)}`,
-
-    time:
-      currentCase.updatedAt
-
+  $("caseForm").addEventListener("submit",event=>{
+    event.preventDefault();
+    const merchant=$("merchant").value.trim();
+    const amountText=$("amount").value.trim();
+    const problem=$("problem").value.trim();
+    const goal=$("goal").value.trim();
+    const error=$("formError");
+    const files=Array.from($("evidence").files || []);
+    let message="";
+    if (!merchant) message="Please enter the merchant or company name.";
+    else if (amountText==="" || !Number.isFinite(Number(amountText)) || Number(amountText)<0 || Number(amountText)>1000000000) message="Please enter a valid amount (0 or more).";
+    else if (!problem) message="Please describe what happened.";
+    else if (!goal) message="Please tell us the outcome you want.";
+    else if (files.some(file=>file.size>15*1024*1024)) message="One selected file is over 15 MB. Choose smaller files.";
+    if(message){error.textContent=message;error.style.display="block";return;}
+    error.style.display="none";
+    const item=createCase(merchant,Number(amountText),problem,goal,files);
+    $("caseForm").reset();
+    renderDashboard();
+    showCase(item);
+    toast("Recovery case created");
   });
-
-  saveCases();
-
-  renderCase(
-    currentCase
-  );
-
-  renderDashboard();
-
-  showToast(
-    `Status updated to ${newStatus}`
-  );
-}
-
-
-/* =========================================================
-   MARK RECOVERY PREPARED
-========================================================= */
-
-function markRecoveryPrepared() {
-
-  const currentCase =
-    getCurrentCase();
-
-  if (!currentCase) {
-    return;
-  }
-
-  if (
-    currentCase.status ===
-    "Recovery Prepared"
-  ) {
-
-    showToast(
-      "Recovery is already marked as prepared"
-    );
-
-    return;
-  }
-
-  currentCase.status =
-    "Recovery Prepared";
-
-  currentCase.updatedAt =
-    new Date().toISOString();
-
-  currentCase.activity.push({
-
-    title:
-      "Recovery action prepared",
-
-    description:
-      "The recovery message is prepared. This prototype does not send it automatically.",
-
-    time:
-      currentCase.updatedAt
-
+  $("savedCaseList").addEventListener("click",event=>{
+    const openButton=event.target.closest("[data-open]");
+    const deleteButton=event.target.closest("[data-delete]");
+    if(openButton){const item=cases.find(row=>row.id===openButton.dataset.open);if(item)showCase(item);}
+    if(deleteButton)deleteCase(deleteButton.dataset.delete);
   });
+  $("caseStatusSelect").addEventListener("change",()=>{
+    const item=currentCase();
+    if(!item)return;
+    if(setStatus(item,$("caseStatusSelect").value)){saveCases();renderCase(item);renderDashboard();toast("Case status updated");}
+  });
+  $("copyMessageButton").addEventListener("click",async()=>{
+    const item=currentCase();
+    if(!item)return;
+    try {
+      if(navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(item.recoveryMessage);
+      else {
+        const temp=document.createElement("textarea");
+        temp.value=item.recoveryMessage;temp.setAttribute("readonly","");temp.style.position="fixed";temp.style.opacity="0";
+        document.body.appendChild(temp);temp.select();
+        const ok=document.execCommand("copy");temp.remove();
+        if(!ok)throw new Error("Copy unavailable");
+      }
+      toast("Message copied — review it before sending");
+    } catch(error) { toast("Copy was blocked. Select the message text and copy it manually."); }
+  });
+  $("markPreparedButton").addEventListener("click",()=>{
+    const item=currentCase();if(!item)return;
+    if(item.status==="Recovery Prepared"){toast("This case is already marked prepared");return;}
+    setStatus(item,"Recovery Prepared");
+    saveCases();renderCase(item);renderDashboard();toast("Marked as prepared — not sent");
+  });
+  $("refreshMessageButton").addEventListener("click",()=>{
+    const item=currentCase();if(!item)return;
+    item.recoveryMessage=generateRecoveryMessage(item);
+    addActivity(item,"Message draft regenerated","A fresh message draft was generated from the current case details.");
+    saveCases();renderCase(item);toast("Message draft regenerated");
+  });
+  $("newCaseButton").addEventListener("click",()=>{
+    showDashboard(false);
+    $("newCaseSection").scrollIntoView({behavior:"smooth",block:"start"});
+    $("merchant").focus({preventScroll:true});
+  });
+  $("backToDashboardButton").addEventListener("click",()=>showDashboard(true));
+  $("dashboardButton").addEventListener("click",()=>showDashboard(true));
+  $("deleteCurrentCaseButton").addEventListener("click",()=>{if(currentCaseId)deleteCase(currentCaseId);});
+  $("caseSearch").addEventListener("input",renderDashboard);
+  $("statusFilter").addEventListener("change",renderDashboard);
 
+  // Import old V3 cases into V4 storage without deleting the original backup.
   saveCases();
-
-  renderCase(
-    currentCase
-  );
-
   renderDashboard();
-
-  showToast(
-    "Recovery marked as prepared"
-  );
-}
-
-
-/* =========================================================
-   DELETE CASE
-========================================================= */
-
-function deleteCaseById(
-  caseId
-) {
-
-  const index =
-    cases.findIndex(
-      item =>
-        item.id === caseId
-    );
-
-  if (
-    index === -1
-  ) {
-    return;
-  }
-
-  const confirmed =
-    window.confirm(
-      "Delete this recovery case?"
-    );
-
-  if (!confirmed) {
-    return;
-  }
-
-  cases.splice(
-    index,
-    1
-  );
-
-  saveCases();
-
-  if (
-    currentCaseId === caseId
-  ) {
-
-    currentCaseId =
-      null;
-
-    document.getElementById(
-      "resultSection"
-    ).style.display =
-      "none";
-
-    document.getElementById(
-      "newCaseSection"
-    ).classList.remove(
-      "hidden"
-    );
-
-    document.getElementById(
-      "dashboardSection"
-    ).classList.remove(
-      "hidden"
-    );
-  }
-
-  renderDashboard();
-
-  showToast(
-    "Case deleted"
-  );
-}
-
-
-/* =========================================================
-   FORM RESET
-========================================================= */
-
-function resetForm() {
-
-  document
-    .getElementById(
-      "caseForm"
-    )
-    .reset();
-
-  document
-    .getElementById(
-      "formError"
-    )
-    .style.display =
-    "none";
-
-  document
-    .getElementById(
-      "formError"
-    )
-    .textContent =
-    "";
-}
-
-
-/* =========================================================
-   FORM SUBMISSION
-========================================================= */
-
-document
-  .getElementById(
-    "caseForm"
-  )
-  .addEventListener(
-    "submit",
-    function(event) {
-
-      event.preventDefault();
-
-      const merchant =
-        document
-          .getElementById(
-            "merchant"
-          )
-          .value
-          .trim();
-
-      const amount =
-        document
-          .getElementById(
-            "amount"
-          )
-          .value
-          .trim();
-
-      const problem =
-        document
-          .getElementById(
-            "problem"
-          )
-          .value
-          .trim();
-
-      const goal =
-        document
-          .getElementById(
-            "goal"
-          )
-          .value
-          .trim();
-
-      const evidenceInput =
-        document
-          .getElementById(
-            "evidence"
-          );
-
-      const errorBox =
-        document
-          .getElementById(
-            "formError"
-          );
-
-      /* VALIDATION */
-
-      if (!merchant) {
-
-        errorBox.textContent =
-          "Please enter the merchant or company name.";
-
-        errorBox.style.display =
-          "block";
-
-        return;
-      }
-
-      if (
-        !amount ||
-        Number(amount) < 0
-      ) {
-
-        errorBox.textContent =
-          "Please enter a valid amount.";
-
-        errorBox.style.display =
-          "block";
-
-        return;
-      }
-
-      if (!problem) {
-
-        errorBox.textContent =
-          "Please describe what happened.";
-
-        errorBox.style.display =
-          "block";
-
-        return;
-      }
-
-      if (!goal) {
-
-        errorBox.textContent =
-          "Please tell us what you want recovered.";
-
-        errorBox.style.display =
-          "block";
-
-        return;
-      }
-
-      errorBox.style.display =
-        "none";
-
-      const uploadedFiles =
-        Array.from(
-          evidenceInput.files || []
-        ).map(
-          file =>
-            file.name
-        );
-
-      const newCase =
-        createCase(
-          merchant,
-          amount,
-          problem,
-          goal,
-          uploadedFiles
-        );
-
-      currentCaseId =
-        newCase.id;
-
-      resetForm();
-
-      renderDashboard();
-
-      renderCase(
-        newCase
-      );
-
-      document
-        .getElementById(
-          "newCaseSection"
-        )
-        .classList.add(
-          "hidden"
-        );
-
-      document
-        .getElementById(
-          "dashboardSection"
-        )
-        .classList.add(
-          "hidden"
-        );
-
-      document
-        .getElementById(
-          "resultSection"
-        )
-        .style.display =
-        "block";
-
-      document
-        .getElementById(
-          "resultSection"
-        )
-        .scrollIntoView({
-          behavior:
-            "smooth",
-          block:
-            "start"
-        });
-
-    }
-  );
-
-
-/* =========================================================
-   STATUS EVENT
-========================================================= */
-
-document
-  .getElementById(
-    "caseStatusSelect"
-  )
-  .addEventListener(
-    "change",
-    function() {
-
-      updateCaseStatus(
-        this.value
-      );
-
-    }
-  );
-
-
-/* =========================================================
-   COPY MESSAGE
-========================================================= */
-
-document
-  .getElementById(
-    "copyMessageButton"
-  )
-  .addEventListener(
-    "click",
-    async function() {
-
-      const currentCase =
-        getCurrentCase();
-
-      if (!currentCase) {
-        return;
-      }
-
-      try {
-
-        await navigator.clipboard.writeText(
-          currentCase.recoveryMessage
-        );
-
-        showToast(
-          "Recovery message copied"
-        );
-
-      } catch (error) {
-
-        showToast(
-          "Copy failed. Please select and copy the message manually."
-        );
-      }
-
-    }
-  );
-
-
-/* =========================================================
-   MARK PREPARED BUTTON
-========================================================= */
-
-document
-  .getElementById(
-    "markPreparedButton"
-  )
-  .addEventListener(
-    "click",
-    markRecoveryPrepared
-  );
-
-
-/* =========================================================
-   NEW CASE BUTTON
-========================================================= */
-
-document
-  .getElementById(
-    "newCaseButton"
-  )
-  .addEventListener(
-    "click",
-    function() {
-
-      currentCaseId =
-        null;
-
-      document
-        .getElementById(
-          "resultSection"
-        )
-        .style.display =
-        "none";
-
-      document
-        .getElementById(
-          "newCaseSection"
-        )
-        .classList.remove(
-          "hidden"
-        );
-
-      document
-        .getElementById(
-          "dashboardSection"
-        )
-        .classList.remove(
-          "hidden"
-        );
-
-      resetForm();
-
-      window.scrollTo({
-        top:
-          0,
-        behavior:
-          "smooth"
-      });
-
-    }
-  );
-
-
-/* =========================================================
-   DASHBOARD BUTTON
-========================================================= */
-
-document
-  .getElementById(
-    "dashboardButton"
-  )
-  .addEventListener(
-    "click",
-    function() {
-
-      currentCaseId =
-        null;
-
-      document
-        .getElementById(
-          "resultSection"
-        )
-        .style.display =
-        "none";
-
-      document
-        .getElementById(
-          "newCaseSection"
-        )
-        .classList.remove(
-          "hidden"
-        );
-
-      document
-        .getElementById(
-          "dashboardSection"
-        )
-        .classList.remove(
-          "hidden"
-        );
-
-      renderDashboard();
-
-      document
-        .getElementById(
-          "dashboardSection"
-        )
-        .scrollIntoView({
-          behavior:
-            "smooth",
-          block:
-            "start"
-        });
-
-    }
-  );
-
-
-/* =========================================================
-   BACK TO DASHBOARD
-========================================================= */
-
-document
-  .getElementById(
-    "backToDashboardButton"
-  )
-  .addEventListener(
-    "click",
-    function() {
-
-      currentCaseId =
-        null;
-
-      document
-        .getElementById(
-          "resultSection"
-        )
-        .style.display =
-        "none";
-
-      document
-        .getElementById(
-          "newCaseSection"
-        )
-        .classList.remove(
-          "hidden"
-        );
-
-      document
-        .getElementById(
-          "dashboardSection"
-        )
-        .classList.remove(
-          "hidden"
-        );
-
-      renderDashboard();
-
-      document
-        .getElementById(
-          "dashboardSection"
-        )
-        .scrollIntoView({
-          behavior:
-            "smooth",
-          block:
-            "start"
-        });
-
-    }
-  );
-
-
-/* =========================================================
-   DELETE CURRENT CASE
-========================================================= */
-
-document
-  .getElementById(
-    "deleteCurrentCaseButton"
-  )
-  .addEventListener(
-    "click",
-    function() {
-
-      if (!currentCaseId) {
-        return;
-      }
-
-      deleteCaseById(
-        currentCaseId
-      );
-
-    }
-  );
-
-
-/* =========================================================
-   INITIAL LOAD
-========================================================= */
-
-renderDashboard();
-
-</script>
-
+  </script>
 </body>
 </html>
